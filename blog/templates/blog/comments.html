@@ -2,40 +2,42 @@
 {% for comment in comments %}
   {% if not comment.is_deleted %}
   <div class="comment-content">
-    <dl class="author-wrap">
+    <dl class="comment-author-wrap">
       <dt class="a11y-hidden">Author</dt>
-      <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" />{{ comment.writer }}</dd>
+      <dd class="author"><img src="{{ comment.writer.profile.image }}" alt="profile image" />{{ comment.writer }}</dd>
       <dt class="a11y-hidden">Created</dt>
       <dd class="created">{{ comment.created_at }}</dd>
     </dl>
     <div class="title-wrap">
       <p>{{ comment.content }}</p>
       {# <button class="btn-like">Like</button> #}
-      <div class="btn-group">
-        <button class="btn-recomment" cm_id="{{comment.pk}}">댓글</button>
-        <div class="recomment-write" style="display:none;">
-          <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="content">
-            <input type="hidden" name="parent_comment" value="{{comment.pk}}">
-            <input type="submit" value="작성">
-            <input type="button" class="btn-recomment-cancel" value="취소">
-          </form>
-        </div>
-        <form action=""></form>
+      <button class="btn-like">
+        <span class="a11y-hidden">like</span>
+      </button>
+    </div>
+    <div class="comment-btn-wrap">
+      {% if user == comment.writer %}
         <form action="{% url 'blog:cm-delete' comment_id=comment.pk %}" method="post">
           {% csrf_token %}
           <button class="btn-delete">
             <span class="a11y-hidden">delete</span>
           </button>
         </form>
-      </div>
+      {% endif %}
+      <button class="recomment btn-comment" cm_id="{{comment.pk}}">댓글</button>
+      <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post" class="comment-form no-display" >
+        {% csrf_token %}
+        <textarea name="content"></textarea>
+        <input type="hidden" name="parent_comment" value="{{comment.pk}}">
+        <input type="submit" value="작성" class="btn-comment">
+        <input type="button" class="recomment-cancel btn-comment" value="취소">
+      </form>
     </div>
     {% else %}
     <div class="comment-content">
       <dl class="author-wrap">
         <dt class="a11y-hidden">Author</dt>
-        <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" />-</dd>
+        <dd class="author"><img src="{% static '/images/anonymous.png' %}" alt="" />-</dd>
         <dt class="a11y-hidden">Created</dt>
         <dd class="created">-</dd>
       </dl>

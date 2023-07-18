@@ -9,17 +9,10 @@ from .models import Post, Comment, Tag, PostFeeling, CommentFeeling
 from django.contrib.auth import get_user_model
 from .forms import PostForm, CommentForm
 
-import re
+from myapp.utils.utils import get_banner
+
 
 # Create your views here.
-
-def get_banner(main="Our Blog", sub="Python, Django, JavaScript & Life", text=''):
-    banner = {
-        "main": main,
-        "sub": sub,
-        "text": text,
-    }
-    return banner
 
 
 class BlogIndex(View):
@@ -27,11 +20,11 @@ class BlogIndex(View):
     def get(self, request):
         category_name = request.GET.get('category', None)
         if category_name:
-            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name)
+            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name, is_deleted=False)
             title = f'{category_name} 검색 결과'
             banner = get_banner(main=f'{category_name.capitalize()} Blog')
         else:
-            posts = Post.objects.prefetch_related('tag_set')
+            posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False)
             title = "블로그에 오신것을 환영합니다."
             banner = get_banner()
 
@@ -100,7 +93,7 @@ class PostDetail(View):
 
         post.view_count += 1
         post.save()
-        
+
         comments = post.comment_set.filter(depth=1)
         tags = post.tag_set.all()
 
@@ -160,7 +153,8 @@ class PostDelete(LoginRequiredMixin, View):
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
             return redirect('blog:error')
-        post.delete()
+        post.is_deleted = True
+        post.save()
         return redirect('blog:list')
 
 

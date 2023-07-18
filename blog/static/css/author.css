@@ -1,12 +1,10 @@
-.author-wrap,
-.stat-wrap {
+.author-wrap {
 	display: flex;
 	gap: 1rem;
 	color: #767676;
 	font-size: 1.2rem;
 }
-.author-wrap dd,
-.stat-wrap dd {
+.author-wrap dd {
 	display: flex;
 	align-items: center;
 	gap: 0.6rem;
@@ -16,12 +14,6 @@
 	width: 2em;
 	height: 2em;
 	border-radius: 50%;
-}
-
-.stat-wrap {
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    margin-top: 5px;
 }
 
 /* .created::before {

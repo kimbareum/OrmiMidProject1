@@ -1,13 +1,13 @@
-const recomment_btns = document.querySelectorAll('.btn-recomment')
+const recomment_btns = document.querySelectorAll('.recomment')
 
 recomment_btns.forEach(btn => {
-  const recomment_wrap = btn.nextElementSibling
+  const comment_form = btn.nextElementSibling
   btn.addEventListener("click", (event) => {
-    recomment_wrap.setAttribute('style', 'display:block;')
+    comment_form.classList.toggle("no-display")
   })
 
-  const recomment_cancle_button = recomment_wrap.firstElementChild.lastElementChild
+  const recomment_cancle_button = comment_form.lastElementChild
   recomment_cancle_button.addEventListener("click", (event) => {
-    recomment_wrap.setAttribute('style', 'display:none')
+    comment_form.classList.toggle("no-display")
   })
 });

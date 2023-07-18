@@ -117,3 +117,12 @@ body {
 	font-size: 2rem;
 	margin-bottom: 2rem;
 }
+
+textarea:focus,
+input:focus {
+    outline: none;
+}
+
+*.no-display {
+    display: none !important;
+}

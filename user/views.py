@@ -7,6 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import IntegrityError
 
+from myapp.utils.utils import get_banner
+
 from .models import Profile
 from .forms import RegisterForm, LoginForm
 

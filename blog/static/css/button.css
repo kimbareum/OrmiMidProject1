@@ -107,3 +107,19 @@
 .btn-delete:hover {
 	background: var(--red-color) url(../assets/icon-delete-white.svg) no-repeat 50% 50% / 1.6rem;
 }
+
+.btn-comment {
+    height: 4rem;
+    min-width: 6rem;
+    border:0;
+    border-radius: var(--border-radius);
+    font-size: 1.3rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-comment:hover,
+.btn-comment:active {
+    background: var(--red-color);
+    color: var(--white-color);
+}

@@ -14,74 +14,98 @@
     <div class="max-width">
       <section class="wrap-box">
         <div class="inner">
-          <!-- author -->
-          <dl class="author-wrap">
-            <dt class="a11y-hidden">Author</dt>
-            <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" />{{ post.writer }}</dd>
-            <dt class="a11y-hidden">Created</dt>
-            <dd class="created">{{ post.created_at }}</dd>
-          </dl>
-          <!-- //author -->
+          {% if not post.is_deleted %}
+            <!-- author -->
+            <dl class="author-wrap">
+              <dt class="a11y-hidden">Author</dt>
+              <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" />{{ post.writer }}</dd>
+              <dt class="a11y-hidden">Created</dt>
+              <dd class="created">{{ post.created_at }}</dd>
+            </dl>
+            <!-- //author -->
 
-          <!-- category -->
-          <dl class="category">
-            <dt class="a11y-hidden">Category</dt>
-            {% if tags %}
-              {% for tag in tags %}
-                <dd><a href="/blog/?category={{tag}}">{{ tag }}</a></dd>
-              {% endfor %}
-            {% else %}
-              <dd>no tags</dd>
+            <!-- category -->
+            <dl class="category">
+              <dt class="a11y-hidden">Category</dt>
+              {% if tags %}
+                {% for tag in tags %}
+                  <dd><a href="/blog/?category={{tag}}">{{ tag }}</a></dd>
+                {% endfor %}
+              {% else %}
+                <dd>no tags</dd>
+              {% endif %}
+            </dl>
+            <!-- //category -->
+            <!-- content -->
+            <div class="title-wrap">
+              <h2>{{ post.title }}</h2>
+              <button class="btn-like">Like</button>
+            </div>
+            <div class="view-wrap">
+              <p>조회수: {{ post.view_count }}</p>
+            </div>
+            <hr />
+            <div class="view-contents">
+              <p>{{ post.content|safe }}</p>
+            </div>
+            <!-- //content -->
+            <hr />
+            <!-- comment -->
+            {% if user.is_authenticated %}
+                <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post" class="comment-form">
+                  {% csrf_token %}
+                  <textarea name="content"></textarea>
+                  <input type="submit" value="작성" class="btn-comment">
+                </form>
             {% endif %}
-          </dl>
-          <!-- //category -->
-          <!-- content -->
-          <div class="title-wrap">
-            <h2>{{ post.title }}</h2>
-            <button class="btn-like">Like</button>
-          </div>
-          <div class="view-wrap">
-            <p>조회수: {{ post.view_count }}</p>
-          </div>
-          <hr />
-          <div class="view-contents">
-            <p>{{ post.content|safe }}</p>
-          </div>
-          <!-- //content -->
-          <hr />
-          <!-- comment -->
-          {% if user.is_authenticated %}
-              <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post">
+            <div class="comment-wrap">
+              {% if comments %}
+                {% include 'blog/comments.html' %}
+              {% else %}
+                <div class="comment-content">
+                  <p>댓글이 없습니다.</p>
+                </div>
+              {% endif %}
+            </div>
+            <!-- comment -->
+            <div class="btn-group">
+              <a href="{% url 'blog:edit' post_id=post.pk %}" class="btn-modify">
+                <span class="a11y-hidden">modify</span>
+              </a>
+              <form action="{% url 'blog:delete' post_id=post.pk %}" method="post" class="comment-form">
                 {% csrf_token %}
-                <input type="text" name="content">
-                <input type="hidden" name="parent_comment" value="">
-                <input type="submit" value="작성">
+                <button type="submit" class="btn-delete">
+                  <span class="a11y-hidden">delete</span>
+                </button>
               </form>
-          {% endif %}
-          <div class="comment-wrap">
-            {% if comments %}
-              {% include 'blog/comments.html' %}
-            {% else %}
-              <div class="comment-content">
-                <p>댓글이 없습니다.</p>
-              </div>
-            {% endif %}
-          </div>
-          <!-- comment -->
-          <div class="btn-group">
-            <a href="{% url 'blog:edit' post_id=post.pk %}" class="btn-modify">
-              <span class="a11y-hidden">modify</span>
+            </div>
+            <a href="/back" class="btn-back">
+              <span class="a11y-hidden">Back</span>
             </a>
-            <form action="{% url 'blog:delete' post_id=post.pk %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn-delete">
-                <span class="a11y-hidden">delete</span>
-              </button>
-            </form>
-          </div>
-          <a href="/back" class="btn-back">
-            <span class="a11y-hidden">Back</span>
-          </a>
+          {% else %}
+            <!-- author -->
+            <dl class="author-wrap">
+              <dt class="a11y-hidden">Author</dt>
+              <dd class="author"><img src="{% static '/images/anonymous.png' %}" alt="" />--</dd>
+              <dt class="a11y-hidden">Created</dt>
+              <dd class="created">--</dd>
+            </dl>
+            <!-- //author -->
+            <!-- content -->
+            <div class="title-wrap">
+              <h2>삭제된 게시물입니다.</h2>
+            </div>
+            <hr />
+            <div class="view-contents">
+              <p>사용자나 관리자에 의해서 삭제된 게시물입니다.</p>
+            </div>
+            <!-- //content -->
+            <hr />
+            <a href="{% url 'blog:list' %}" class="button gray">돌아가기</a>
+            <a href="/back" class="btn-back">
+              <span class="a11y-hidden">Back</span>
+            </a>
+          {% endif %}
         </div>
       </section>
     </div>
