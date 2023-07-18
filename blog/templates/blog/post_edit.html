@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+  {% block title %}
+    {{ title }}
+  {% endblock title %}
+  {% block head %}
+    <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+    <!-- toast editor -->
+    <link rel="stylesheet"href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  {% endblock head %}
+  {% block content %}
+    <!-- post view -->
+    <div class="view">
+			<div class="max-width">
+				<section class="wrap-box">
+					<div class="inner">
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+            <form id="write-form" action="{% url 'blog:edit' post_id=post.pk %}" method="post">
+              {% csrf_token %}
+              <label for="form-title">제목 : </label>
+              <input id="form-title" name="title" type="text" value="{{ post.title }}">
+              <label for="form-tags">태그 : </label>
+              <input id="form-tags" name="tags" type="text" value="{{ post.tags }}">
+              <div id="editor"></div>
+              <input id="form-content" name="content" type="hidden">
+              <input id="form-thumbnail" name="thumbnail" type="hidden">
+              <input type="submit" value="수정">
+            </form>
+						<a href="javascript:window.history.back();" class="btn-back">
+							<span class="a11y-hidden">Back</span>
+						</a>
+					</div>
+				</section>
+			</div>
+		</div>
+  {% endblock content %}
+  {% block script %}
+    <script>
+      const post_content = `{{ post.content|safe }}`
+    </script>
+    <script src="{% static '/js/post_form.js' %}"></script>
+  {% endblock script %}

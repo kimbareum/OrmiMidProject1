@@ -1,0 +1,20 @@
+{% load static %}
+{% for comment in comments %}
+  <div class="comment-content" depth="{{comment.depth}}">
+    <dl class="author-wrap">
+      <dt class="a11y-hidden">Author</dt>
+      <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" />{{ comment.writer }}</dd>
+      <dt class="a11y-hidden">Created</dt>
+      <dd class="created">{{ comment.created_at }}</dd>
+    </dl>
+    <div class="title-wrap">
+      <p>{{ comment.content }}</p>
+      {# <button class="btn-like">Like</button> #}
+    </div>
+    {% if comment.child_comments %}
+      {% with comment.child_comments.all as comments %}
+        {% include 'blog/comments.html' %}
+      {% endwith %}
+    {% endif %}
+  </div>
+{% endfor %}

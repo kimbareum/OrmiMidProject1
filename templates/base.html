@@ -17,6 +17,11 @@
 		<!-- layout -->
 		<link rel="stylesheet" href="{% static '/css/header.css' %}" />
 		<link rel="stylesheet" href="{% static '/css/footer.css' %}" />
+    <!-- component -->
+    <link rel="stylesheet" href="{% static '/css/button.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/banner.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/category.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/author.css' %}" />
     {% block head %}
     {% endblock head %}
 	</head>
@@ -25,7 +30,7 @@
 		<header>
 			<div class="max-width">
 				<h1>
-					<a href="./">
+					<a href="{% url 'blog:list' %}">
 						<img src="{% static '/assets/Logo.svg' %}" alt="My Blog" />
 					</a>
 				</h1>
@@ -38,7 +43,7 @@
               </a>
             </li>
             <li>
-              <a href="#" class="button">
+              <a href="{% url 'blog:write' %}" class="button">
                 <img src="{% static '/assets/icon-modify-white.svg' %}" alt="" />
                 <span>Write</span>
               </a>
@@ -70,6 +75,19 @@
 			</div>
 		</header>
 		<!--// header -->
+    <!-- banner -->
+    <div class="banner">
+      <div class="max-width">
+        <div class="banner-contents">
+          <p class="sub-text">React Blog</p>
+          <p class="main-text">My BLOG</p>
+          <p class="description">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nostrum dolor provident beatae deserunt magnam, illo neque. Maiores ipsum commodi dolorum beatae aliquid laboriosam est
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- //banner -->
 
     {% block content %}
     {% endblock content %}
@@ -82,5 +100,8 @@
 			</div>
 		</footer>
 		<!-- //footer -->
+    <script src="{% static '/js/common_button.js' %}"></script>
+    {% block script %}
+    {% endblock script %}
 	</body>
 </html>

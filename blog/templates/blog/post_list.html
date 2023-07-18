@@ -4,71 +4,76 @@
     {{ title }}
   {% endblock title %}
   {% block head %}
+    <!-- layout -->
     <link rel="stylesheet" href="{% static '/css/about.css' %}" />
     <!-- component -->
-    <link rel="stylesheet" href="{% static '/css/button.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/banner.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/category.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/author.css' %}" />
     <link rel="stylesheet" href="{% static '/css/post.css' %}" />
     <link rel="stylesheet" href="{% static '/css/posts.css' %}" />
     <link rel="stylesheet" href="{% static '/css/main.css' %}" />
   {% endblock head %}
   {% block content %}
-    <!-- banner -->
-		<div class="banner">
-			<div class="max-width">
-				<div class="banner-contents">
-					<p class="sub-text">React Blog</p>
-					<p class="main-text">My BLOG</p>
-					<p class="description">
-						Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nostrum dolor provident beatae deserunt magnam, illo neque. Maiores ipsum commodi dolorum beatae aliquid laboriosam est
-					</p>
-				</div>
-			</div>
-		</div>
-		<!-- //banner -->
-
 		<!-- main -->
 		<main>
 			<!-- posts -->
 			<div class="max-width">
 				<h2 class="a11y-hidden">Post</h2>
 				<ul class="posts">
-          {% for post in posts %}
-          <li>
-						<a href="#" class="post">
-							<article>
-								<img src="{% static '/images/post-img6.jpg' %}" alt="" />
-								<div class="contents-wrap">
-									<!-- category -->
-									<dl class="category">
-										<dt class="a11y-hidden">Category</dt>
-                    {% for tag in post.tag_set.all %}
-                      <dd>{{ tag }}</dd>
-                    {% endfor %}
-									</dl>
-									<!-- //category -->
+          {% if posts %}
+            {% for post in posts %}
+            <li>
+              <a href="{% url 'blog:detail' post_id=post.pk %}" class="post">
+                <article>
+                  <img src="{{ post.thumbnail }}" alt="" class="thumbnail"/>
+                  <div class="contents-wrap">
+                    <!-- category -->
+                    <dl class="category">
+                      <dt class="a11y-hidden">Category</dt>
+                      {% with post.tag_set.all as tags %}
+                        {% if tags %}
+                          {% for tag in tags %}
+                            <dd>{{ tag }}</dd>
+                          {% endfor %}
+                        {% else %}
+                          <dd>no tags</dd>
+                        {% endif %}
+                      {% endwith %}
+                    </dl>
+                    <!-- //category -->
+                    <h3>{{ post.title }}</h3>
+                    <!-- author -->
+                    <dl class="author-wrap">
+                      <dt class="a11y-hidden">Author</dt>
+                      <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" /> {{ post.user }}</dd>
+                      <dt class="a11y-hidden">Created</dt>
+                      <dd class="created">{{ post.created_at }}</dd>
+                    </dl>
+                    <!-- //author -->
+                    <p class="post-description">
+                      {{ post.content|striptags }}
+                    </p>
+                  </div>
+                </article>
+              </a>
+            </li>
+            {% endfor %}
+          {% else %}
+            <li>
+              <a href="{% url 'blog:write' %}" class="post">
+                <article>
+                  <img src="/static/images/post-img1.jpg" alt="" />
+                  <div class="contents-wrap">
 
-									<h3>{{ post.title }}</h3>
+                    <h3>작성된 게시물이 없습니다.</h3>
 
-									<!-- author -->
-									<dl class="author-wrap">
-										<dt class="a11y-hidden">Author</dt>
-										<dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" /> {{ post.user }}</dd>
-										<dt class="a11y-hidden">Created</dt>
-										<dd class="created">{{ post.created_at }}</dd>
-									</dl>
-									<!-- //author -->
-
-									<p class="post-description">
-										{{ post.content }}
-									</p>
-								</div>
-							</article>
-						</a>
-					</li>
-          {% endfor %}
+                    <p class="post-description">
+                      게시글을 작성해주세요.
+                    </p>
+                  </div>
+                </article>
+              </a>
+            </li>
+          {% endif %}
+          
 					
 				</ul>
 				<!-- //posts -->
