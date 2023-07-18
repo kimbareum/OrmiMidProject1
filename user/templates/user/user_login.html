@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
+<link rel="stylesheet" href="{% static '/css/view.css' %}" />
+{% endblock head %}
+
+{% block content %}
+<div class="view">
+  <div class="max-width">
+    <section class="wrap-box">
+      <div class="inner">
+        <div class="title-wrap">
+          <h2>로그인</h2>
+        </div>
+        <hr>
+        <div class="login-form">
+          <form action="{% url 'user:login' %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class="button" value="로그인">
+          </form>
+        </div>
+    </section>
+  </div>
+</div>
+{% endblock content %}

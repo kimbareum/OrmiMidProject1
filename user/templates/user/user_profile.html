@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  {{ title }}
+{% endblock title %}
+{% block head %}
+  <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/comment.css' %}" />
+{% endblock head %}
+{% block content %}
+  <!-- post view -->
+  <div class="view">
+    <div class="max-width">
+      <section class="wrap-box">
+        <div class="inner">
+          <!-- content -->
+          <div class="title-wrap">
+            <h2>{{ profile.user }}님의 프로필</h2>
+          </div>
+          <hr />
+          <div class="view-contents">
+            <p>프로필 이미지 :</p>
+            <p><img src="{{ profile.image }}" alt="" /></p>
+            <p>상태 :</p>
+            <p>{{ profile.state }}</p>
+          </div>
+          <!-- //content -->
+          <div class="btn-group">
+            <a href="#" class="btn-modify">
+              <span class="a11y-hidden">modify</span>
+            </a>
+          </div>
+          <a href="/back" class="btn-back">
+            <span class="a11y-hidden">Back</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <!-- //post view -->
+{% endblock content %}
+{% block script %}
+<script>
+  const form = document.querySelector(".profile-form")
+  const get_image = form.querySelector("#get_image")
+
+  let result = ""
+  get_image.onchange = (event) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(get_image.files[0]);
+    reader.onload = function(e) {
+      result = e.target.result
+    }
+  }
+  
+  form.addEventListener("submit", (event)=>{
+    event.preventDefault()
+    event.target.image.value = result
+    form.submit()
+  })
+</script>
+{% endblock script %}

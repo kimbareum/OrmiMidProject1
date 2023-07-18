@@ -1,85 +1,93 @@
 {% extends "base.html" %}
 {% load static %}
-  {% block title %}
-    {{ title }}
-  {% endblock title %}
-  {% block head %}
-    <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/view.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/comment.css' %}" />
-  {% endblock head %}
-  {% block content %}
-    <!-- post view -->
-    <div class="view">
-			<div class="max-width">
-				<section class="wrap-box">
-					<div class="inner">
-						<!-- author -->
-						<dl class="author-wrap">
-							<dt class="a11y-hidden">Author</dt>
-							<dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" />{{ post.writer }}</dd>
-							<dt class="a11y-hidden">Created</dt>
-							<dd class="created">{{ post.created_at }}</dd>
-						</dl>
-						<!-- //author -->
+{% block title %}
+  {{ title }}
+{% endblock title %}
+{% block head %}
+  <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/comment.css' %}" />
+{% endblock head %}
+{% block content %}
+  <!-- post view -->
+  <div class="view">
+    <div class="max-width">
+      <section class="wrap-box">
+        <div class="inner">
+          <!-- author -->
+          <dl class="author-wrap">
+            <dt class="a11y-hidden">Author</dt>
+            <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" />{{ post.writer }}</dd>
+            <dt class="a11y-hidden">Created</dt>
+            <dd class="created">{{ post.created_at }}</dd>
+          </dl>
+          <!-- //author -->
 
-						<!-- category -->
-						<dl class="category">
-							<dt class="a11y-hidden">Category</dt>
-              {% if tags %}
-                {% for tag in tags %}
-                  <dd>{{ tag }}</dd>
-                {% endfor %}
-              {% else %}
-                <dd>no tags</dd>
-              {% endif %}
-						</dl>
-						<!-- //category -->
-            <!-- content -->
-						<div class="title-wrap">
-							<h2>{{ post.title }}</h2>
-							<button class="btn-like">Like</button>
-						</div>
-						<hr />
-						<div class="view-contents">
-							<p>{{ post.content|safe }}</p>
-						</div>
-            <!-- //content -->
-            <!-- comment -->
-            <div class="comment-wrap">
-              {% if user.is_authenticated %}
-                <form action="" method="post">
-                  {% csrf_token %}
-                  <input type="text" name="comment">
-                  <input type="submit" value="댓글 작성">
-                </form>
-              {% endif %}
-              {% if comments %}
-                {% include 'blog/comments.html' %}
-              {% else %}
-                  <div class="comment-content">
-                    <p>댓글이 없습니다.</p>
-                  </div>
-              {% endif %}
-            </div>
-            <!-- comment -->
-						<div class="btn-group">
-							<a href="{% url 'blog:edit' post_id=post.pk %}" class="btn-modify">
-								<span class="a11y-hidden">modify</span>
-							</a>
-              <form action="{% url 'blog:delete' post_id=post.pk %}" method="post">
+          <!-- category -->
+          <dl class="category">
+            <dt class="a11y-hidden">Category</dt>
+            {% if tags %}
+              {% for tag in tags %}
+                <dd><a href="/blog/?category={{tag}}">{{ tag }}</a></dd>
+              {% endfor %}
+            {% else %}
+              <dd>no tags</dd>
+            {% endif %}
+          </dl>
+          <!-- //category -->
+          <!-- content -->
+          <div class="title-wrap">
+            <h2>{{ post.title }}</h2>
+            <button class="btn-like">Like</button>
+          </div>
+          <div class="view-wrap">
+            <p>조회수: {{ post.view_count }}</p>
+          </div>
+          <hr />
+          <div class="view-contents">
+            <p>{{ post.content|safe }}</p>
+          </div>
+          <!-- //content -->
+          <hr />
+          <!-- comment -->
+          {% if user.is_authenticated %}
+              <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn-delete">
-                  <span class="a11y-hidden">delete</span>
-                </button>
+                <input type="text" name="content">
+                <input type="hidden" name="parent_comment" value="">
+                <input type="submit" value="작성">
               </form>
-						</div>
-						<a href="javascript:window.history.back();" class="btn-back">
-							<span class="a11y-hidden">Back</span>
-						</a>
-					</div>
-				</section>
-			</div>
-		</div>
-    <!-- //post view -->
-  {% endblock content %}
+          {% endif %}
+          <div class="comment-wrap">
+            {% if comments %}
+              {% include 'blog/comments.html' %}
+            {% else %}
+              <div class="comment-content">
+                <p>댓글이 없습니다.</p>
+              </div>
+            {% endif %}
+          </div>
+          <!-- comment -->
+          <div class="btn-group">
+            <a href="{% url 'blog:edit' post_id=post.pk %}" class="btn-modify">
+              <span class="a11y-hidden">modify</span>
+            </a>
+            <form action="{% url 'blog:delete' post_id=post.pk %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn-delete">
+                <span class="a11y-hidden">delete</span>
+              </button>
+            </form>
+          </div>
+          <a href="/back" class="btn-back">
+            <span class="a11y-hidden">Back</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <!-- //post view -->
+{% endblock content %}
+{% block script %}
+  <script src="{% static '/js/comments.js' %}"></script>
+{% endblock script %}

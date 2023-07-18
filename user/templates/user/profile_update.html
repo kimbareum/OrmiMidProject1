@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  {{ title }}
+{% endblock title %}
+{% block head %}
+  <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/comment.css' %}" />
+{% endblock head %}
+{% block content %}
+  <!-- post view -->
+  <div class="view">
+    <div class="max-width">
+      <section class="wrap-box">
+        <div class="inner">
+          <!-- content -->
+          <div class="title-wrap">
+            <h2>{{ user }}님의 프로필</h2>
+          </div>
+          <hr />
+          <div class="view-contents">
+            <form action="{% url 'user:pf-update' %}" method="post" class="profile-form">
+              {% csrf_token %}
+              <input type="hidden" name="image" value="{{ profile.image }}">
+              <p>프로필 이미지 :</p>
+              <p><img src="{{ profile.image }}" alt="" /></p>
+              <input type="file" accept="image/*" id="get_image">
+              <p>상태 :</p>
+              {% if profile.state %}
+                <input type="text" name="state" value="{{ profile.state }}">
+              {% else %}
+                <input type="text" name="state" value="" placeholder="당신의 상태를 입력해주세요!">
+              {% endif %}
+              <input type="submit" value="수정">
+            </form>
+          </div>
+          <!-- //content -->
+          <div class="btn-group">
+            <a href="#" class="btn-modify">
+              <span class="a11y-hidden">modify</span>
+            </a>
+          </div>
+          <a href="/back" class="btn-back">
+            <span class="a11y-hidden">Back</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <!-- //post view -->
+{% endblock content %}
+{% block script %}
+<script>
+  const form = document.querySelector(".profile-form")
+  const get_image = form.querySelector("#get_image")
+
+  let result = ""
+  get_image.onchange = (event) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(get_image.files[0]);
+    reader.onload = function(e) {
+      result = e.target.result
+    }
+  }
+  
+  form.addEventListener("submit", (event)=>{
+    event.preventDefault()
+    event.target.image.value = result
+    form.submit()
+  })
+</script>
+{% endblock script %}

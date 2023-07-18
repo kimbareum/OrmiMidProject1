@@ -6,8 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>
-      {% block title %}
-      {% endblock title %}
+      {{title}}
     </title>
 		<!-- reset.css : meyerweb -->
 		<link rel="stylesheet" href="{% static '/css/reset.css' %}" />
@@ -31,15 +30,15 @@
 			<div class="max-width">
 				<h1>
 					<a href="{% url 'blog:list' %}">
-						<img src="{% static '/assets/Logo.svg' %}" alt="My Blog" />
+						<img src="{% static '/assets/Logo.svg' %}" alt="Our Blog" />
 					</a>
 				</h1>
 				<ul>
           {% if user.is_authenticated %}
             <!-- 로그인 -->
             <li class="profile-img">
-              <a href="#">
-                <img src="{% static '/assets/profile.jpg' %}" alt="My Page" />
+              <a href="{% url 'user:pf-update' %}">
+                <img src="{{ user.profile.image }}" alt="Profile Update" />
               </a>
             </li>
             <li>
@@ -49,22 +48,22 @@
               </a>
             </li>
             <li>
-              <button class="button white">
+              <a href="{% url 'user:logout' %}" class="button white">
                 <img src="{% static '/assets/icon-logout.svg' %}" alt="" />
                 <span>Logout</span>
-              </button>
+              </a>
             </li>
             <!-- //로그인 -->
           {% else %}
             <!-- 로그아웃 -->
             <li>
-              <a href="#" class="button gray">
+              <a href="{% url 'user:login' %}" class="button gray">
                 <img src="{% static '/assets/icon-login.svg' %}" alt="" />
                 <span>Login</span>
               </a>
             </li>
             <li class="only-pc">
-              <a href="#" class="button gray">
+              <a href="{% url 'user:register' %}" class="button gray">
                 <img src="{% static '/assets/icon-register.svg' %}" alt="" />
                 <span>Register</span>
               </a>
@@ -79,10 +78,10 @@
     <div class="banner">
       <div class="max-width">
         <div class="banner-contents">
-          <p class="sub-text">React Blog</p>
-          <p class="main-text">My BLOG</p>
+          <p class="sub-text">{{banner.sub}}</p>
+          <p class="main-text">{{banner.main}}</p>
           <p class="description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nostrum dolor provident beatae deserunt magnam, illo neque. Maiores ipsum commodi dolorum beatae aliquid laboriosam est
+            {{banner.text}}
           </p>
         </div>
       </div>

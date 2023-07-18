@@ -1,6 +1,7 @@
 {% load static %}
 {% for comment in comments %}
-  <div class="comment-content" depth="{{comment.depth}}">
+  {% if not comment.is_deleted %}
+  <div class="comment-content">
     <dl class="author-wrap">
       <dt class="a11y-hidden">Author</dt>
       <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" />{{ comment.writer }}</dd>
@@ -10,7 +11,38 @@
     <div class="title-wrap">
       <p>{{ comment.content }}</p>
       {# <button class="btn-like">Like</button> #}
+      <div class="btn-group">
+        <button class="btn-recomment" cm_id="{{comment.pk}}">댓글</button>
+        <div class="recomment-write" style="display:none;">
+          <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="content">
+            <input type="hidden" name="parent_comment" value="{{comment.pk}}">
+            <input type="submit" value="작성">
+            <input type="button" class="btn-recomment-cancel" value="취소">
+          </form>
+        </div>
+        <form action=""></form>
+        <form action="{% url 'blog:cm-delete' comment_id=comment.pk %}" method="post">
+          {% csrf_token %}
+          <button class="btn-delete">
+            <span class="a11y-hidden">delete</span>
+          </button>
+        </form>
+      </div>
     </div>
+    {% else %}
+    <div class="comment-content">
+      <dl class="author-wrap">
+        <dt class="a11y-hidden">Author</dt>
+        <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" />-</dd>
+        <dt class="a11y-hidden">Created</dt>
+        <dd class="created">-</dd>
+      </dl>
+      <div class="title-wrap">
+        <p class="deleted-comment">삭제된 코멘트 입니다.</p>
+      </div>
+    {% endif %}
     {% if comment.child_comments %}
       {% with comment.child_comments.all as comments %}
         {% include 'blog/comments.html' %}

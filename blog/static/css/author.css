@@ -1,10 +1,12 @@
-.author-wrap {
+.author-wrap,
+.stat-wrap {
 	display: flex;
 	gap: 1rem;
 	color: #767676;
 	font-size: 1.2rem;
 }
-.author-wrap dd {
+.author-wrap dd,
+.stat-wrap dd {
 	display: flex;
 	align-items: center;
 	gap: 0.6rem;
@@ -16,11 +18,17 @@
 	border-radius: 50%;
 }
 
-.created::before {
+.stat-wrap {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+/* .created::before {
 	content: "";
 	display: block;
 	width: 1px;
 	height: 0.8em;
 	margin-right: 1rem;
 	background: var(--border-color);
-}
+} */

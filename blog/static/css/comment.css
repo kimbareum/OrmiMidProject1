@@ -1,3 +1,17 @@
+.comment-wrap {
+    margin-left: -30px;
+}
+
 .comment-content {
-    margin-left: 20px;
+    margin-left: 30px;
+}
+
+.comment-content .btn-group {
+    position:relative;
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	font-size: 1.6rem;
+    top: 0;
+    right: 0;
 }

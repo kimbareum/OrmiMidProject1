@@ -1,125 +1,130 @@
 {% extends "base.html" %}
 {% load static %}
-  {% block title %}
-    {{ title }}
-  {% endblock title %}
-  {% block head %}
-    <!-- layout -->
-    <link rel="stylesheet" href="{% static '/css/about.css' %}" />
-    <!-- component -->
-    <link rel="stylesheet" href="{% static '/css/post.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/posts.css' %}" />
-    <link rel="stylesheet" href="{% static '/css/main.css' %}" />
-  {% endblock head %}
-  {% block content %}
-		<!-- main -->
-		<main>
-			<!-- posts -->
-			<div class="max-width">
-				<h2 class="a11y-hidden">Post</h2>
-				<ul class="posts">
-          {% if posts %}
-            {% for post in posts %}
-            <li>
-              <a href="{% url 'blog:detail' post_id=post.pk %}" class="post">
-                <article>
-                  <img src="{{ post.thumbnail }}" alt="" class="thumbnail"/>
-                  <div class="contents-wrap">
-                    <!-- category -->
-                    <dl class="category">
-                      <dt class="a11y-hidden">Category</dt>
-                      {% with post.tag_set.all as tags %}
-                        {% if tags %}
-                          {% for tag in tags %}
-                            <dd>{{ tag }}</dd>
-                          {% endfor %}
-                        {% else %}
-                          <dd>no tags</dd>
-                        {% endif %}
-                      {% endwith %}
-                    </dl>
-                    <!-- //category -->
-                    <h3>{{ post.title }}</h3>
-                    <!-- author -->
-                    <dl class="author-wrap">
-                      <dt class="a11y-hidden">Author</dt>
-                      <dd class="author"><img src="{% static '/images/profile.jpg' %}" alt="" /> {{ post.user }}</dd>
-                      <dt class="a11y-hidden">Created</dt>
-                      <dd class="created">{{ post.created_at }}</dd>
-                    </dl>
-                    <!-- //author -->
-                    <p class="post-description">
-                      {{ post.content|striptags }}
-                    </p>
-                  </div>
-                </article>
-              </a>
-            </li>
-            {% endfor %}
-          {% else %}
-            <li>
-              <a href="{% url 'blog:write' %}" class="post">
-                <article>
-                  <img src="/static/images/post-img1.jpg" alt="" />
-                  <div class="contents-wrap">
+{% block head %}
+  <!-- layout -->
+  <link rel="stylesheet" href="{% static '/css/about.css' %}" />
+  <!-- component -->
+  <link rel="stylesheet" href="{% static '/css/post.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/posts.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/main.css' %}" />
+{% endblock head %}
+{% block content %}
+  <!-- main -->
+  <main>
+    <!-- posts -->
+    <div class="max-width">
+      <h2 class="a11y-hidden">Post</h2>
+      <ul class="posts">
+        {% if posts %}
+          {% for post in posts %}
+          <li>
+            <a href="{% url 'blog:detail' post_id=post.pk %}" class="post">
+              <article>
+                <img src="{{ post.thumbnail }}" alt="" class="thumbnail"/>
+                <div class="contents-wrap">
+                  <!-- category -->
+                  <dl class="category">
+                    <dt class="a11y-hidden">Category</dt>
+                    {% with post.tag_set.all as tags %}
+                      {% if tags %}
+                        {% for tag in tags %}
+                        <form action="/blog/" method="get">
+                          <input type="hidden" name="category" value="{{tag}}">
+                          <dd><input type="submit" value="{{tag}}"/></dd>
+                        </form>
+                        {% endfor %}
+                      {% else %}
+                        <form action="/blog/" method="get">
+                          <input type="hidden" name="category" value="none">
+                          <dd><input type="submit" value="no tags"/></dd>
+                        </form>
+                      {% endif %}
+                    {% endwith %}
+                  </dl>
+                  <!-- //category -->
+                  <h3>{{ post.title }}</h3>
+                  <!-- author -->
+                  <dl class="author-wrap">
+                    <dt class="a11y-hidden">Author</dt>
+                    <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" /> {{ post.writer }}</dd>
+                  </dl>
+                  <dl class="stat-wrap">
+                    <dt class="a11y-hidden">Created</dt>
+                    <dd class="created">{{ post.created_at }}</dd>
+                    <dt class="a11y-hidden">Created</dt>
+                    <dd class="view">조회수: {{ post.view_count }}</dd>
+                  </dl>
+                  
+                  <!-- //author -->
+                  <p class="post-description">
+                    {{ post.content|striptags }}
+                  </p>
+                </div>
+              </article>
+            </a>
+          </li>
+          {% endfor %}
+        {% else %}
+          <li>
+            <a href="{% url 'blog:write' %}" class="post">
+              <article>
+                <img src="/static/images/post-img1.jpg" alt="" />
+                <div class="contents-wrap">
+                  <h3>작성된 게시물이 없습니다.</h3>
+                  <p class="post-description">
+                    게시글을 작성해주세요.
+                  </p>
+                </div>
+              </article>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+      <!-- //posts -->
 
-                    <h3>작성된 게시물이 없습니다.</h3>
-
-                    <p class="post-description">
-                      게시글을 작성해주세요.
-                    </p>
-                  </div>
-                </article>
-              </a>
-            </li>
-          {% endif %}
-          
-					
-				</ul>
-				<!-- //posts -->
-
-				<!-- about -->
-				<aside class="about">
-					<h2>About Me</h2>
-					<img src="{% static '/images/profile.jpg' %}" alt="" class="user-profile" />
-					<p class="user-name">Chilli</p>
-					<p class="user-description">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-					<h3>Categories</h3>
-					<ul class="categories">
-						<li><a href="#">Life</a></li>
-						<li><a href="#">Style</a></li>
-						<li><a href="#">Tech</a></li>
-						<li><a href="#">Sport</a></li>
-						<li><a href="#">Photo</a></li>
-						<li><a href="#">Develop</a></li>
-						<li><a href="#">Music</a></li>
-					</ul>
-					<h3>Follow</h3>
-					<ul class="sns">
-						<li>
-							<a href="#">
-								<img src="{% static '/assets/Facebook.svg' %}" alt="Facebook" />
-							</a>
-						</li>
-						<li>
-							<a href="#">
-								<img src="{% static '/assets/Twitter.svg' %}" alt="Twitter" />
-							</a>
-						</li>
-						<li>
-							<a href="#">
-								<img src="{% static '/assets/Instagram.svg' %}" alt="Instagram" />
-							</a>
-						</li>
-						<li>
-							<a href="#">
-								<img src="{% static '/assets/Github.svg' %}" alt="GitHub" />
-							</a>
-						</li>
-					</ul>
-				</aside>
-				<!-- //about -->
-			</div>
-		</main>
-		<!-- //main -->
-  {% endblock content %}
+      <!-- about -->
+      <aside class="about">
+        <h2>About Me</h2>
+        <img src="{% static '/images/profile.jpg' %}" alt="" class="user-profile" />
+        <p class="user-name">Kim Bareum</p>
+        <p class="user-description">주니어 개발자 입니다.</p>
+        <h3>Categories</h3>
+        <ul class="categories">
+          <li><a href="/blog/">All</a></li>
+          <li><a href="/blog/?category=Life">Life</a></li>
+          <li><a href="/blog/?category=Style">Style</a></li>
+          <li><a href="/blog/?category=Tech">Tech</a></li>
+          <li><a href="/blog/?category=Sport">Sport</a></li>
+          <li><a href="/blog/?category=Photo">Photo</a></li>
+          <li><a href="/blog/?category=Develop">Develop</a></li>
+          <li><a href="/blog/?category=Music">Music</a></li>
+        </ul>
+        <h3>Follow</h3>
+        <ul class="sns">
+          <li>
+            <a href="#">
+              <img src="{% static '/assets/Facebook.svg' %}" alt="Facebook" />
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <img src="{% static '/assets/Twitter.svg' %}" alt="Twitter" />
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <img src="{% static '/assets/Instagram.svg' %}" alt="Instagram" />
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <img src="{% static '/assets/Github.svg' %}" alt="GitHub" />
+            </a>
+          </li>
+        </ul>
+      </aside>
+      <!-- //about -->
+    </div>
+  </main>
+  <!-- //main -->
+{% endblock content %}

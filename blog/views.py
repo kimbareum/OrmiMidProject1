@@ -13,14 +13,31 @@ import re
 
 # Create your views here.
 
+def get_banner(main="Our Blog", sub="Python, Django, JavaScript & Life", text=''):
+    banner = {
+        "main": main,
+        "sub": sub,
+        "text": text,
+    }
+    return banner
+
 
 class BlogIndex(View):
     
     def get(self, request):
-        posts = Post.objects.prefetch_related('tag_set')
+        category_name = request.GET.get('category', None)
+        if category_name:
+            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name)
+            title = f'{category_name} 검색 결과'
+            banner = get_banner(main=f'{category_name.capitalize()} Blog')
+        else:
+            posts = Post.objects.prefetch_related('tag_set')
+            title = "블로그에 오신것을 환영합니다."
+            banner = get_banner()
 
         context = {
-            "title": "블로그에 오신것을 환영합니다.",
+            "title": title,
+            "banner": banner,
             "posts": posts,
         }
         return render(request, 'blog/post_list.html', context)
@@ -29,6 +46,9 @@ class BlogIndex(View):
 class BlogError(View):
     
     def get(self,request):
+        context = {
+            "banner": get_banner(text="Something Went Wrong..."),
+        }
         return render(request, 'blog/error.html')
 
 
@@ -38,6 +58,7 @@ class PostWrite(LoginRequiredMixin, View):
         form = PostForm()
         context = {
             "title": "게시글 작성하기",
+            "banner": get_banner(),
             'form': form,
         }
         return render(request, 'blog/post_form.html', context)
@@ -77,11 +98,15 @@ class PostDetail(View):
             messages.error(request, str(e))
             return redirect('blog:error')
 
+        post.view_count += 1
+        post.save()
+        
         comments = post.comment_set.filter(depth=1)
         tags = post.tag_set.all()
 
         context = {
             "title": post.title,
+            "banner": get_banner(),
             "post": post,
             "comments": comments,
             "tags": tags,
@@ -105,6 +130,7 @@ class PostUpdate(LoginRequiredMixin, View):
         post.tags = tags
         context = {
             "title": f'{post.title} 수정',
+            "banner": get_banner(),
             "post": post,
         }
         return render(request, 'blog/post_edit.html', context)
@@ -145,10 +171,32 @@ class CommentWrite(LoginRequiredMixin, View):
         if form.is_valid():
             user = request.user
             try:
-                post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
+                post = Post.objects.get(pk=post_id)
             except ObjectDoesNotExist as e:
                 messages.error(request, str(e))
                 return redirect('blog:error')
             comment = form.save(commit=False)
             comment.writer = user
             comment.post = post
+            comment.depth = comment.parent_comment.depth + 1
+            comment.save()
+        return redirect('blog:detail', post_id=post_id)
+
+
+class CommentDelete(LoginRequiredMixin, View):
+
+    def post(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except ObjectDoesNotExist as e:
+            messages.error(request, str(e))
+            return redirect('blog:error')
+        comment.is_deleted = True
+        comment.save()
+        return redirect('blog:detail', post_id=comment.post.pk)
+
+
+class SearchCategory(View):
+    
+    def get(self, request):
+        pass

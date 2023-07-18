@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
+from .data import DEFAULT_PROFILE_IMAGE
 
 
 class UserManager(BaseUserManager):
@@ -31,7 +32,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    nickname = models.CharField(max_length=20)
+    nickname = models.CharField(max_length=15)
     first_name = None
     last_name = None
 
@@ -40,12 +41,12 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.username
+        return self.nickname
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='user/media')
-    state = models.CharField(max_length=50)
+    image = models.TextField(default=DEFAULT_PROFILE_IMAGE)
+    state = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -11,8 +11,10 @@ class Post(models.Model):
     content = models.TextField()
     thumbnail = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
+    view_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_deleted = models.BooleanField(default=False)
     
     def __str__(self):
         return f'{self.title}'
@@ -32,9 +34,9 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_fixed = models.BooleanField()
-    is_deleted = models.BooleanField()
-    depth = models.IntegerField()
+    is_fixed = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+    depth = models.IntegerField(default=1)
 
     def __str__(self):
         return f'{self.post.title}/{self.content}'
