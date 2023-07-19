@@ -102,7 +102,8 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        profile = Profile.objects.get(user=user)
+        profile = Profile.objects.select_related('user')
+        print(profile)
         context = {
             "title": f"{user.nickname}의 프로필",
             'banner': get_banner(main=f"{user.username}'s Profile"),

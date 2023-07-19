@@ -50,9 +50,19 @@ class CommentFeeling(models.Model):
 
 
 class Tag(models.Model):
+    TAG_CHOICES = [
+        ('Life', 'Life'),
+        ('Style', 'Style'),
+        ('Tech', 'Tech'),
+        ('Sport', 'Life'),
+        ('Photo', 'Photo'),
+        ('Develop', 'Develop'),
+        ('Music', 'Music')
+    ]
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=10)
+    #name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, choices=TAG_CHOICES, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.post.title}/{self.name}'

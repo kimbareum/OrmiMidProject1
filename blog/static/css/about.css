@@ -40,21 +40,6 @@
 	padding: 0 0.4rem;
 }
 
-.categories {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: center;
-	gap: 0.8rem;
-}
-.categories li a {
-	background: var(--gray-background);
-	color: var(--gray-text);
-	font-size: 1.2rem;
-	border-radius: calc(var(--border-radius) * 2);
-	padding: 0.2rem 1.2rem;
-}
-
 .sns {
 	display: flex;
 	gap: 0.6rem;

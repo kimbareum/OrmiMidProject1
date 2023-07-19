@@ -12,6 +12,19 @@
   <!-- main -->
   <main>
     <!-- posts -->
+    <div class="max-width category-select">
+      <p class="a11y-hidden">Category Select</p>
+      <ul class="categories">
+        <li><a href="/blog/">All</a></li>
+        <li><a href="/blog/?category=Life">Life</a></li>
+        <li><a href="/blog/?category=Style">Style</a></li>
+        <li><a href="/blog/?category=Tech">Tech</a></li>
+        <li><a href="/blog/?category=Sport">Sport</a></li>
+        <li><a href="/blog/?category=Photo">Photo</a></li>
+        <li><a href="/blog/?category=Develop">Develop</a></li>
+        <li><a href="/blog/?category=Music">Music</a></li>
+      </ul>
+    </div>
     <div class="max-width">
       <h2 class="a11y-hidden">Post</h2>
       <ul class="posts">
@@ -54,7 +67,6 @@
                     <dt class="a11y-hidden">Created</dt>
                     <dd class="view">조회수: {{ post.view_count }}</dd>
                   </dl>
-                  
                   <!-- //author -->
                   <p class="post-description">
                     {{ post.content|striptags }}
@@ -88,17 +100,6 @@
         <img src="{% static '/images/profile.jpg' %}" alt="" class="user-profile" />
         <p class="user-name">Kim Bareum</p>
         <p class="user-description">주니어 개발자 입니다.</p>
-        <h3>Categories</h3>
-        <ul class="categories">
-          <li><a href="/blog/">All</a></li>
-          <li><a href="/blog/?category=Life">Life</a></li>
-          <li><a href="/blog/?category=Style">Style</a></li>
-          <li><a href="/blog/?category=Tech">Tech</a></li>
-          <li><a href="/blog/?category=Sport">Sport</a></li>
-          <li><a href="/blog/?category=Photo">Photo</a></li>
-          <li><a href="/blog/?category=Develop">Develop</a></li>
-          <li><a href="/blog/?category=Music">Music</a></li>
-        </ul>
         <h3>Follow</h3>
         <ul class="sns">
           <li>

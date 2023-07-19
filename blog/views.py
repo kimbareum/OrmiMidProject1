@@ -20,11 +20,11 @@ class BlogIndex(View):
     def get(self, request):
         category_name = request.GET.get('category', None)
         if category_name:
-            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name, is_deleted=False)
+            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name, is_deleted=False).order_by('-created_at')
             title = f'{category_name} 검색 결과'
             banner = get_banner(main=f'{category_name.capitalize()} Blog')
-        else:
-            posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False)
+        else:   
+            posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False).order_by('-created_at')
             title = "블로그에 오신것을 환영합니다."
             banner = get_banner()
 

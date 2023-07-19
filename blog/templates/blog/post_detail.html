@@ -67,18 +67,20 @@
                 </div>
               {% endif %}
             </div>
-            <!-- comment -->
-            <div class="btn-group">
-              <a href="{% url 'blog:edit' post_id=post.pk %}" class="btn-modify">
-                <span class="a11y-hidden">modify</span>
-              </a>
-              <form action="{% url 'blog:delete' post_id=post.pk %}" method="post" class="comment-form">
-                {% csrf_token %}
-                <button type="submit" class="btn-delete">
-                  <span class="a11y-hidden">delete</span>
-                </button>
-              </form>
-            </div>
+            <!-- //comment -->
+            {% if user == post.writer %}
+              <div class="btn-group">
+                <a href="{% url 'blog:edit' post_id=post.pk %}" class="btn-modify">
+                  <span class="a11y-hidden">modify</span>
+                </a>
+                <form action="{% url 'blog:delete' post_id=post.pk %}" method="post" class="comment-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-delete">
+                    <span class="a11y-hidden">delete</span>
+                  </button>
+                </form>
+              </div>
+            {% endif %}
             <a href="/back" class="btn-back">
               <span class="a11y-hidden">Back</span>
             </a>

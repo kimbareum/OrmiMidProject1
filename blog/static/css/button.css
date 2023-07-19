@@ -86,6 +86,7 @@
 
 .btn-modify,
 .btn-delete {
+    flex-shrink: 0;
 	width: 4rem;
 	height: 4rem;
 	border: 0;
@@ -110,7 +111,7 @@
 
 .btn-comment {
     height: 4rem;
-    min-width: 6rem;
+    flex-shrink: 0;
     border:0;
     border-radius: var(--border-radius);
     font-size: 1.3rem;
@@ -122,4 +123,9 @@
 .btn-comment:active {
     background: var(--red-color);
     color: var(--white-color);
+}
+
+.btn-comment:focus {
+	outline-color: rgba(var(--red-rgb), 0.2);
+	box-shadow: none;
 }

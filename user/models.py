@@ -46,7 +46,10 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.TextField(default=DEFAULT_PROFILE_IMAGE)
+    image = models.TextField(default='/static/images/profile.jpg')
     state = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.nickname
