@@ -1,9 +1,9 @@
 from django import forms
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 
 class PostForm(forms.ModelForm):
 
-    tags = forms.CharField(max_length=50, required=False)
+    tags = forms.MultipleChoiceField(choices=Tag.TAG_CHOICES)
 
     class Meta:
         model = Post

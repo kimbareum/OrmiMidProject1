@@ -29,7 +29,7 @@
               <dt class="a11y-hidden">Category</dt>
               {% if tags %}
                 {% for tag in tags %}
-                  <dd><a href="/blog/?category={{tag}}">{{ tag }}</a></dd>
+                  <dd><a href="/blog/search/?category={{tag.name}}">{{ tag.name }}</a></dd>
                 {% endfor %}
               {% else %}
                 <dd>no tags</dd>
@@ -39,7 +39,10 @@
             <!-- content -->
             <div class="title-wrap">
               <h2>{{ post.title }}</h2>
-              <button class="btn-like">Like</button>
+              <form action="{% url 'blog:like' post_id=post.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-like">Like {{ post.like_count }}</button>
+              </form>
             </div>
             <div class="view-wrap">
               <p>조회수: {{ post.view_count }}</p>
@@ -81,9 +84,6 @@
                 </form>
               </div>
             {% endif %}
-            <a href="/back" class="btn-back">
-              <span class="a11y-hidden">Back</span>
-            </a>
           {% else %}
             <!-- author -->
             <dl class="author-wrap">
@@ -104,9 +104,6 @@
             <!-- //content -->
             <hr />
             <a href="{% url 'blog:list' %}" class="button gray">돌아가기</a>
-            <a href="/back" class="btn-back">
-              <span class="a11y-hidden">Back</span>
-            </a>
           {% endif %}
         </div>
       </section>

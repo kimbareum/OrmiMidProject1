@@ -71,14 +71,16 @@
 	padding-left: 3rem;
 	border: 1px solid rgba(var(--red-rgb), 0.5);
 	border-radius: var(--border-radius);
-	background: var(--white-color) url(../assets/icon-like.svg) no-repeat 2.5rem 50% / 2.4rem;
+	background: var(--white-color) url(../assets/icon-like.svg) no-repeat 1.7rem 50% / 2.4rem;
 	transition: all 0.3s;
 }
+
 .btn-like:hover,
 .btn-like.active {
-	background: var(--red-color) url(../assets/icon-like-white.svg) no-repeat 2.5rem 50% / 2.4rem;
+	background: var(--red-color) url(../assets/icon-like-white.svg) no-repeat 1.7rem 50% / 2.4rem;
 	color: var(--white-color);
 }
+
 .btn-like:focus {
 	outline-color: rgba(var(--red-rgb), 0.2);
 	box-shadow: none;

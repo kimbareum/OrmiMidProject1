@@ -6,6 +6,7 @@
 {% block head %}
   <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
   <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/post_form.css' %}" />
   <!-- toast editor -->
   <link rel="stylesheet"href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
@@ -16,6 +17,10 @@
     <div class="max-width">
       <section class="wrap-box">
         <div class="inner">
+          <div class="title-wrap">
+            <h2>게시글 수정하기</h2>
+          </div>
+          <hr>
           {% if messages %}
             {% for message in messages %}
               <div class="alert alert-{{ message.tags }}">{{ message }}</div>
@@ -23,18 +28,37 @@
           {% endif %}
           <form id="write-form" action="{% url 'blog:edit' post_id=post.pk %}" method="post">
             {% csrf_token %}
-            <label for="form-title">제목 : </label>
-            <input id="form-title" name="title" type="text" value="{{ post.title }}">
-            <label for="form-tags">태그 : </label>
-            <input id="form-tags" name="tags" type="text" value="{{ post.tags }}">
+            <div class="title-input">
+              <label for="form-title">제목 : </label>
+              <input id="form-title" name="title" type="text" value="{{ post.title }}">
+            </div>
+            <div class="category-drop"><span class="selected-category">
+              <dl class="category"><dt class="a11y-hidden">선택된 카테고리</dt>
+              {% for tag in selected_tag_list %}
+                <dd>{{ tag }}</dd>
+              {% endfor %}
+              </dl>
+            </span><button type="button" class="select-button">▼</button></div>
+            <ul class="select-wrap no-display">
+              {% for tag in tag_list %}
+                {% if tag in selected_tag_list %}
+                  <li>
+                    <input type="checkbox" name="tags" id="{{tag}}" value="{{tag}}" checked>
+                    <label for="{{tag}}">{{tag}}</label>
+                  </li>
+                {% else %}
+                  <li>
+                    <input type="checkbox" name="tags" id="{{tag}}" value="{{tag}}">
+                    <label for="{{tag}}">{{tag}}</label>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
             <div id="editor"></div>
             <input id="form-content" name="content" type="hidden">
             <input id="form-thumbnail" name="thumbnail" type="hidden">
-            <input type="submit" value="수정">
+            <input type="submit" value="작성">
           </form>
-          <a href="/back" class="btn-back">
-            <span class="a11y-hidden">Back</span>
-          </a>
         </div>
       </section>
     </div>

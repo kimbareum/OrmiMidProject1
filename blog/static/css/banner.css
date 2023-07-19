@@ -1,9 +1,38 @@
 .banner {
 	position: relative;
-	background: url(../assets/background.jpg) no-repeat 50% 50% / cover;
 	height: 27em;
 	margin-bottom: -7em;
 }
+
+.banner[image='1'] {
+    background: url(../assets/background.jpg) no-repeat 50% 50% / cover;
+}
+
+.banner[image='2'] {
+    background: url(../images/post-background1.jpg) no-repeat 50% 50% / cover;
+}
+
+.banner[image='3'] {
+    background: url(../images/post-background2.jpg) no-repeat 50% 50% / cover;
+}
+
+.banner[image='4'] {
+    background: url(../images/post-background3.jpg) no-repeat 50% 50% / cover;
+}
+
+.banner[image='5'] {
+    background: url(../images/post-background4.jpg) no-repeat 50% 50% / cover;
+}
+
+.banner[image='6'] {
+    background: url(../images/post-background5.jpg) no-repeat 50% 50% / cover;
+}
+
+.banner[image='7'] {
+    background: url(../images/post-background6.jpg) no-repeat 50% 50% / cover;
+}
+
+
 
 .banner-contents {
 	width: 28rem;

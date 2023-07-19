@@ -1,0 +1,19 @@
+.category-drop {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+}
+
+.selected-category .category {
+    margin: 0;
+}
+
+#write-form ul {
+    margin: 0.5rem 0;
+}
+
+#write-form ul li {
+    margin: 0;
+}

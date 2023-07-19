@@ -16,13 +16,9 @@
       <p class="a11y-hidden">Category Select</p>
       <ul class="categories">
         <li><a href="/blog/">All</a></li>
-        <li><a href="/blog/?category=Life">Life</a></li>
-        <li><a href="/blog/?category=Style">Style</a></li>
-        <li><a href="/blog/?category=Tech">Tech</a></li>
-        <li><a href="/blog/?category=Sport">Sport</a></li>
-        <li><a href="/blog/?category=Photo">Photo</a></li>
-        <li><a href="/blog/?category=Develop">Develop</a></li>
-        <li><a href="/blog/?category=Music">Music</a></li>
+        {% for tag in tag_list %}
+          <li><a href="/blog/search/?category={{ tag }}">{{ tag }}</a></li>
+        {% endfor %}
       </ul>
     </div>
     <div class="max-width">
@@ -39,19 +35,12 @@
                   <dl class="category">
                     <dt class="a11y-hidden">Category</dt>
                     {% with post.tag_set.all as tags %}
-                      {% if tags %}
-                        {% for tag in tags %}
-                        <form action="/blog/" method="get">
-                          <input type="hidden" name="category" value="{{tag}}">
-                          <dd><input type="submit" value="{{tag}}"/></dd>
+                      {% for tag in tags %}
+                        <form action="{% url 'blog:search' %}" method="get">
+                          <input type="hidden" name="category" value="{{tag.name}}">
+                          <dd><input type="submit" value="{{tag.name}}"/></dd>
                         </form>
-                        {% endfor %}
-                      {% else %}
-                        <form action="/blog/" method="get">
-                          <input type="hidden" name="category" value="none">
-                          <dd><input type="submit" value="no tags"/></dd>
-                        </form>
-                      {% endif %}
+                      {% endfor %}
                     {% endwith %}
                   </dl>
                   <!-- //category -->
@@ -92,12 +81,25 @@
           </li>
         {% endif %}
       </ul>
-      <!-- //posts -->
-
+      <!-- //posts -->      
+      <aside>
+        <div class="page-select">
+          <p class="a11y-hidden">Page Select</p>
+          <ul class="pages">
+          {% for page in paginator.page_range %}
+            {% if page != posts.number %}
+              <li><a href="/blog/?page={{page}}">{{page}}</a></li>
+            {% else %}
+              <li><a class="current-page" href="/blog/?page={{page}}">{{page}}</a></li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        </div>
+      </aside>
       <!-- about -->
-      <aside class="about">
+      <aside class="about max-width">
         <h2>About Me</h2>
-        <img src="{% static '/images/profile.jpg' %}" alt="" class="user-profile" />
+        <img src="{% static '/images/my_profile.png' %}" alt="" class="user-profile" />
         <p class="user-name">Kim Bareum</p>
         <p class="user-description">주니어 개발자 입니다.</p>
         <h3>Follow</h3>

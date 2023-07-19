@@ -1,4 +1,5 @@
 {% load static %}
+{% load random_banner %}
 <!DOCTYPE html>
 <html lang="ko-KR">
 	<head>
@@ -75,7 +76,7 @@
 		</header>
 		<!--// header -->
     <!-- banner -->
-    <div class="banner">
+    <div class="banner" image="{% random_banner %}">
       <div class="max-width">
         <div class="banner-contents">
           <p class="sub-text">{{banner.sub}}</p>

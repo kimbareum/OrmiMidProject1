@@ -10,10 +10,10 @@
     </dl>
     <div class="title-wrap">
       <p>{{ comment.content }}</p>
-      {# <button class="btn-like">Like</button> #}
-      <button class="btn-like">
-        <span class="a11y-hidden">like</span>
-      </button>
+      <form action="{% url 'blog:cm-like' post_id=post.pk comment_id=comment.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-like">{{ comment.like_count }}</button>
+      </form>
     </div>
     <div class="comment-btn-wrap">
       {% if user == comment.writer %}

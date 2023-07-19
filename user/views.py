@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from myapp.utils.utils import get_banner
 
 from .models import Profile
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, ProfileUpdateForm
 
 
 User = get_user_model()
@@ -100,10 +100,12 @@ class Logout(View):
 
 class ProfileView(LoginRequiredMixin, View):
 
-    def get(self, request):
-        user = request.user
-        profile = Profile.objects.select_related('user')
-        print(profile)
+    def get(self, request, user_id):
+        try:
+            profile = Profile.objects.select_related('user').get(user__pk=user_id)
+        except ObjectDoesNotExist as e:
+            messages.error(request, str(e))
+        user = profile.user
         context = {
             "title": f"{user.nickname}의 프로필",
             'banner': get_banner(main=f"{user.username}'s Profile"),
@@ -125,12 +127,16 @@ class ProfileUpdate(View):
         return render(request, 'user/profile_update.html', context)
 
     def post(self, request):
-        user = request.user
-        profile = Profile.objects.get(user=user)
-        profile.image = request.POST.get('image')
-        profile.state = request.POST.get('state')
-        profile.save()
-        return redirect('user:profile')
+        form = ProfileUpdateForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            profile = Profile.objects.get(user=user)
+            profile.image = form.cleaned_data.get('image')
+            profile.state = form.cleaned_data.get('state')
+            profile.save()
+            user.nickname = form.cleaned_data.get('nickname')
+            user.save()
+            return redirect('user:profile', user_id=user.pk)
 
 
 

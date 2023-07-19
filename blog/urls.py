@@ -11,9 +11,11 @@ urlpatterns = [
     path('<int:post_id>/', views.PostDetail.as_view(), name='detail'),
     path('edit/<int:post_id>', views.PostUpdate.as_view(), name='edit'),
     path('delete/<int:post_id>/', views.PostDelete.as_view(), name='delete'),
+    path('<int:post_id>/like', views.PostLike.as_view(), name='like'),
     # 코멘트
     path('<int:post_id>/comment/write', views.CommentWrite.as_view(), name='cm-write'),
     path('comment/delete/<int:comment_id>', views.CommentDelete.as_view(), name='cm-delete'),
+    path('<int:post_id>/<int:comment_id>/like', views.CommentLike.as_view(), name='cm-like'),
     # 검색
-    # path('search/<str:tag>', views.SearchTag,as_view(), name='tag-search'),
+    path('search/', views.SearchCategory.as_view(), name='search'),
 ]

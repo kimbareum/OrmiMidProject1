@@ -55,8 +55,8 @@
 	width: 1.6rem;
 	display: block;
 }
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
 	.about {
 		width: 100%;
 	}
-}
+} */

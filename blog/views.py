@@ -3,10 +3,12 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from .models import Post, Comment, Tag, PostFeeling, CommentFeeling
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Count
+
 from django.contrib.auth import get_user_model
+from .models import Post, Comment, Tag, PostFeeling, CommentFeeling
 from .forms import PostForm, CommentForm
 
 from myapp.utils.utils import get_banner
@@ -14,24 +16,55 @@ from myapp.utils.utils import get_banner
 
 # Create your views here.
 
-
+### 공용페이지
 class BlogIndex(View):
     
     def get(self, request):
+        page = request.GET.get('page')
+        posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False).order_by('-created_at')
+        paginator = Paginator(posts, 6)
+        try:
+            page_object = paginator.page(page)
+        except PageNotAnInteger:
+            page_object = paginator.page(1)
+        except EmptyPage:
+            page_object = paginator.page(paginator.num_pages)
+        title = "블로그에 오신것을 환영합니다."
+        banner = get_banner()
+
+        tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
+
+        context = {
+            "title": title,
+            "banner": banner,
+            "posts": page_object,
+            "paginator": paginator,
+            "tag_list": tag_list,
+        }
+        return render(request, 'blog/post_list.html', context)
+
+
+class SearchCategory(View):
+    
+    def get(self, request):
         category_name = request.GET.get('category', None)
-        if category_name:
-            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name, is_deleted=False).order_by('-created_at')
+        tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
+
+        if category_name and category_name in tag_list:
+            posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name, is_deleted=False)
             title = f'{category_name} 검색 결과'
-            banner = get_banner(main=f'{category_name.capitalize()} Blog')
-        else:   
-            posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False).order_by('-created_at')
-            title = "블로그에 오신것을 환영합니다."
-            banner = get_banner()
+            banner = get_banner(main=f'{category_name} Blog')
+        else:
+            posts = Post.objects.prefetch_related('tag_set')
+            title = f'블로그에 오신것을 환영합니다.'
+            banner = get_banner(main=f'Our Blog')
 
         context = {
             "title": title,
             "banner": banner,
             "posts": posts,
+            "tag_list": tag_list,
+            "category_name": category_name,
         }
         return render(request, 'blog/post_list.html', context)
 
@@ -45,14 +78,15 @@ class BlogError(View):
         return render(request, 'blog/error.html')
 
 
+### 포스트
 class PostWrite(LoginRequiredMixin, View):
 
     def get(self, request):
-        form = PostForm()
+        tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
         context = {
             "title": "게시글 작성하기",
             "banner": get_banner(),
-            'form': form,
+            'tag_list': tag_list,
         }
         return render(request, 'blog/post_form.html', context)
     
@@ -63,20 +97,9 @@ class PostWrite(LoginRequiredMixin, View):
             user = request.user
             post.writer = user
             post.save()
-
-            tag_names = form.cleaned_data['tags'].split('#')[1:]
-            for tag_name in tag_names:
-                tag_name = tag_name.strip()
-                if not tag_name:
-                    continue
-                try:
-                    tag = Tag()
-                    tag.name = tag_name
-                    tag.writer = user
-                    tag.post = post
-                    tag.save()
-                except:
-                    messages.error(request, '태그가 정상적으로 입력되지 않았습니다.')
+            tag_names = form.cleaned_data['tags']
+            for tag in tag_names:
+                Tag.objects.create(name=tag, post=post, writer=user)
             return redirect('blog:list')
         messages.error(request, form.errors)
         return redirect('blog:write')
@@ -96,7 +119,7 @@ class PostDetail(View):
 
         comments = post.comment_set.filter(depth=1)
         tags = post.tag_set.all()
-
+        
         context = {
             "title": post.title,
             "banner": get_banner(),
@@ -111,20 +134,21 @@ class PostUpdate(LoginRequiredMixin, View):
 
     def get(self, request, post_id):
         try:
-            post = Post.objects.get(pk=post_id)
+            post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
             return redirect('blog:error')
-        
-        tag_list = Tag.objects.filter(post=post)
-        tags = ''
-        for tag in tag_list:
-            tags += (f'#{tag} ')
-        post.tags = tags
+        tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
+        tags = post.tag_set.all()
+        selected_tag_list = []
+        for tag in tags:
+            selected_tag_list.append(tag.name)
         context = {
             "title": f'{post.title} 수정',
             "banner": get_banner(),
             "post": post,
+            "tag_list": tag_list,
+            "selected_tag_list": selected_tag_list,
         }
         return render(request, 'blog/post_edit.html', context)
 
@@ -158,6 +182,35 @@ class PostDelete(LoginRequiredMixin, View):
         return redirect('blog:list')
 
 
+class PostLike(LoginRequiredMixin, View):
+
+    def post(self, request, post_id):
+        try:
+            post = Post.objects.get(pk=post_id)
+        except ObjectDoesNotExist as e:
+            messages.error(request, str(e))
+            return redirect('blog:error')
+        
+        user = request.user
+
+        try:
+            feeling = PostFeeling.objects.select_related('user').get(post=post)
+            like = feeling.like
+            if like:
+                post.like_count -= 1
+            else:
+                post.like_count += 1
+            post.save()
+            feeling.like = not like
+            feeling.save()
+        except:
+            PostFeeling.objects.create(user=user, post=post)
+            post.like_count += 1
+            post.save()
+
+        return redirect('blog:detail', post_id=post_id)
+
+### 코멘트
 class CommentWrite(LoginRequiredMixin, View):
     
     def post(self, request, post_id):
@@ -190,7 +243,30 @@ class CommentDelete(LoginRequiredMixin, View):
         return redirect('blog:detail', post_id=comment.post.pk)
 
 
-class SearchCategory(View):
-    
-    def get(self, request):
-        pass
+class CommentLike(LoginRequiredMixin, View):
+
+    def post(self, request, comment_id, post_id):
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except ObjectDoesNotExist as e:
+            messages.error(request, str(e))
+            return redirect('blog:error')
+        
+        user = request.user
+
+        try:
+            feeling = CommentFeeling.objects.select_related('user').get(comment=comment)
+            like = feeling.like
+            if like:
+                comment.like_count -= 1
+            else:
+                comment.like_count += 1
+            comment.save()
+            feeling.like = not like
+            feeling.save()
+        except:
+            CommentFeeling.objects.create(user=user, comment=comment)
+            comment.like_count += 1
+            comment.save()
+
+        return redirect('blog:detail', post_id=post_id)
