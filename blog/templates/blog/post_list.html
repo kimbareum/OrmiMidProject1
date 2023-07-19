@@ -36,10 +36,7 @@
                     <dt class="a11y-hidden">Category</dt>
                     {% with post.tag_set.all as tags %}
                       {% for tag in tags %}
-                        <form action="{% url 'blog:search' %}" method="get">
-                          <input type="hidden" name="category" value="{{tag.name}}">
-                          <dd><input type="submit" value="{{tag.name}}"/></dd>
-                        </form>
+                        <dd>{{ tag.name }}</dd>
                       {% endfor %}
                     {% endwith %}
                   </dl>
@@ -86,13 +83,23 @@
         <div class="page-select">
           <p class="a11y-hidden">Page Select</p>
           <ul class="pages">
-          {% for page in paginator.page_range %}
-            {% if page != posts.number %}
-              <li><a href="/blog/?page={{page}}">{{page}}</a></li>
-            {% else %}
-              <li><a class="current-page" href="/blog/?page={{page}}">{{page}}</a></li>
-            {% endif %}
-          {% endfor %}
+          {% if not category_name %}
+            {% for page in paginator.page_range %}
+              {% if page != posts.number %}
+                <li><a href="/blog/?page={{page}}">{{page}}</a></li>
+              {% else %}
+                <li><a class="current-page" href="/blog/?page={{page}}">{{page}}</a></li>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            {% for page in paginator.page_range %}
+              {% if page != posts.number %}
+                <li><a href="/blog/search/?category={{category_name}}&&page={{page}}">{{page}}</a></li>
+              {% else %}
+                <li><a class="current-page" href="/blog/search/?category={{category_name}}&&page={{page}}">{{page}}</a></li>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
           </ul>
         </div>
       </aside>

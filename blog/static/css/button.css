@@ -86,6 +86,22 @@
 	box-shadow: none;
 }
 
+.btn-like.liked {
+    background: var(--red-color) url(../assets/icon-like-white.svg) no-repeat 1.7rem 50% / 2.4rem;
+	color: var(--white-color);
+}
+
+.btn-like.liked:hover,
+.btn-like.liked:active {
+    background: var(--white-color) url(../assets/icon-like.svg) no-repeat 1.7rem 50% / 2.4rem;
+	color: inherit;
+}
+
+.btn-like.liked:focus {
+    outline-color: rgba(var(--red-rgb), 0.2);
+	box-shadow: none;
+}
+
 .btn-modify,
 .btn-delete {
     flex-shrink: 0;

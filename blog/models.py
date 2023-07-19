@@ -62,8 +62,6 @@ class Tag(models.Model):
         ('Music', 'Music')
     ]
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    writer = models.ForeignKey(User, on_delete=models.CASCADE)
-    #name = models.CharField(max_length=10)
     name = models.CharField(max_length=10, choices=TAG_CHOICES, null=True, blank=True)
 
     def __str__(self):

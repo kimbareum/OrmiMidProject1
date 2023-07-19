@@ -52,6 +52,23 @@
 	box-shadow: none;
 }
 
+.comment-content .btn-like.liked {
+    background: var(--red-color) url(../assets/icon-like-white.svg) 0.8rem 50% no-repeat;
+    color: var(--white-color);
+}
+
+.comment-content .btn-like:hover,
+.comment-content .btn-like.active {
+	background: var(--white-color) url(../assets/icon-like.svg) 0.8rem 50% no-repeat;
+	color: inherit;
+}
+.comment-content .btn-like:focus {
+	outline-color: rgba(var(--red-rgb), 0.2);
+	box-shadow: none;
+}
+
+
+
 .comment-btn-wrap {
     display: flex;
     flex-direction: row;

@@ -6,7 +6,7 @@
 {% block head %}
   <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
   <link rel="stylesheet" href="{% static '/css/view.css' %}" />
-  <link rel="stylesheet" href="{% static '/css/comment.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/detail.css' %}" />
 {% endblock head %}
 {% block content %}
   <!-- post view -->
@@ -41,7 +41,11 @@
               <h2>{{ post.title }}</h2>
               <form action="{% url 'blog:like' post_id=post.pk %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn-like">Like {{ post.like_count }}</button>
+                {% if is_like_post == True %}
+                  <button type="submit" class="btn-like liked">Like {{ post.like_count }}</button>
+                {% else %}
+                  <button type="submit" class="btn-like">Like {{ post.like_count }}</button>
+                {% endif %}
               </form>
             </div>
             <div class="view-wrap">

@@ -48,6 +48,7 @@ class SearchCategory(View):
     
     def get(self, request):
         category_name = request.GET.get('category', None)
+        page = request.GET.get('page', None)
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
 
         if category_name and category_name in tag_list:
@@ -58,6 +59,14 @@ class SearchCategory(View):
             posts = Post.objects.prefetch_related('tag_set')
             title = f'블로그에 오신것을 환영합니다.'
             banner = get_banner(main=f'Our Blog')
+
+        paginator = Paginator(posts, 6)
+        try:
+            page_object = paginator.page(page)
+        except PageNotAnInteger:
+            page_object = paginator.page(1)
+        except EmptyPage:
+            page_object = paginator.page(paginator.num_pages)
 
         context = {
             "title": title,
@@ -99,7 +108,7 @@ class PostWrite(LoginRequiredMixin, View):
             post.save()
             tag_names = form.cleaned_data['tags']
             for tag in tag_names:
-                Tag.objects.create(name=tag, post=post, writer=user)
+                Tag.objects.create(name=tag, post=post)
             return redirect('blog:list')
         messages.error(request, form.errors)
         return redirect('blog:write')
@@ -109,14 +118,21 @@ class PostDetail(View):
     
     def get(self, request, post_id):
         try:
-            post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
+            post = Post.objects.prefetch_related('comment_set', 'tag_set', 'postfeeling_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
             return redirect('blog:error')
 
         post.view_count += 1
         post.save()
-
+        user_feeling_post = post.postfeeling_set.filter(user=request.user)
+        is_like_post = True if user_feeling_post and user_feeling_post[0].like == True else False
+        
+        like_comment_list = Comment.objects.filter(
+            post=post,
+            commentfeeling__user=request.user,
+            commentfeeling__like=True
+        ).values_list('pk', flat=True)
         comments = post.comment_set.filter(depth=1)
         tags = post.tag_set.all()
         
@@ -126,6 +142,8 @@ class PostDetail(View):
             "post": post,
             "comments": comments,
             "tags": tags,
+            "is_like_post": is_like_post,
+            "like_comment_list": like_comment_list,
         }
         return render(request, 'blog/post_detail.html', context)
 
@@ -155,7 +173,7 @@ class PostUpdate(LoginRequiredMixin, View):
     def post(self, request, post_id):
         form = PostForm(request.POST)
         try:
-            post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
+            post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
             return redirect('blog:error')
@@ -163,7 +181,13 @@ class PostUpdate(LoginRequiredMixin, View):
             post.title = form.cleaned_data['title']
             post.content = form.cleaned_data['content']
             post.thumbnail = form.cleaned_data['thumbnail']
-            post.save()
+            update_tags = form.cleaned_data['tags']
+            current_tags = post.tag_set.all()
+            for tag_name in update_tags:
+                Tag.objects.get_or_create(name=tag_name, post_id=post_id)
+            for tag in current_tags:
+                if tag.name not in update_tags:
+                    tag.delete()
             return redirect('blog:detail', post_id = post_id)
         messages.error(request, form.errors)
         return redirect('blog:edit', post_id=post_id)
@@ -225,7 +249,10 @@ class CommentWrite(LoginRequiredMixin, View):
             comment = form.save(commit=False)
             comment.writer = user
             comment.post = post
-            comment.depth = comment.parent_comment.depth + 1
+            if comment.parent_comment:
+                comment.depth = comment.parent_comment.depth + 1
+            else:
+                comment.depth = 1
             comment.save()
         return redirect('blog:detail', post_id=post_id)
 

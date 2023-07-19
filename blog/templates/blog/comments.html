@@ -12,7 +12,12 @@
       <p>{{ comment.content }}</p>
       <form action="{% url 'blog:cm-like' post_id=post.pk comment_id=comment.pk %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn-like">{{ comment.like_count }}</button>
+        {% if comment.pk in like_comment_list %}
+          <button type="submit" class="btn-like liked">{{ comment.like_count }}</button>
+        {% else %}
+          <button type="submit" class="btn-like">{{ comment.like_count }}</button>
+        {% endif %}
+        
       </form>
     </div>
     <div class="comment-btn-wrap">
