@@ -136,6 +136,13 @@
 - 댓글과 대댓글 기능
     - 대댓글기능은 댓글 모델에 parent_comment 칼럼을 만들어서 자가 참조를 하는 식으로 구현합니다.
     - 댓글의 표시는 comments.html 을 재귀적으로 호출하면서 indent 를 주도록 합니다.
+        ```django
+        {% if comment.child_comments %}
+            {% with comment.child_comments.all as comments %}
+                {% include 'blog/comments.html' %}
+            {% endwith %}
+        {% endif %}
+        ```
     - 댓글의 작성자도 게시물과 마찬가지 방법으로 처리합니다.
     - 좋아요 기능의 경우에는 게시글과 구현방법이 같습니다.
     - 댓글의 삭제버튼은 댓글의 작성자와 유저가 같은 경우에만 표기됩니다,
