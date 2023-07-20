@@ -20,7 +20,7 @@
 16. ~~input에다가 script를 넣는걸 방지하기 위해서, script 가 있을 경우 전송되지 않도록 설정~~ form의 is_valid에서 정규표현식을 이용해서 cleaned_data 내의 script 태그를 제거하도록 구성
 17. ~~Author에 profile페이지로 연결하는 기능 추가~~
 18. ~~collect statics~~
-19. 프로필수정에서 회원탈퇴랑 비밀번호변경 기능 추가.
+19. ~~프로필수정에서 회원탈퇴랑 비밀번호변경 기능 추가.~~
 20. ~~session 시간 수정.~~
 
 ## 모델

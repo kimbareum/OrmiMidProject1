@@ -19,42 +19,42 @@ import re
 # Create your views here.
 
 ### 공용페이지
-class BlogIndex(View):
+# class BlogIndex(View):
     
-    def get(self, request):
-        page = request.GET.get('page')
-        posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False).order_by('-created_at')
-        paginator = Paginator(posts, 6)
-        try:
-            page_object = paginator.page(page)
-        except PageNotAnInteger:
-            page_object = paginator.page(1)
-        except EmptyPage:
-            page_object = paginator.page(paginator.num_pages)
-        title = "블로그에 오신것을 환영합니다."
-        banner = get_banner()
+#     def get(self, request):
+#         page = request.GET.get('page')
+#         posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False).order_by('-created_at')
+#         paginator = Paginator(posts, 6)
+#         try:
+#             page_object = paginator.page(page)
+#         except PageNotAnInteger:
+#             page_object = paginator.page(1)
+#         except EmptyPage:
+#             page_object = paginator.page(paginator.num_pages)
+#         title = "블로그에 오신것을 환영합니다."
+#         banner = get_banner()
 
-        tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
+#         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
 
-        search_option = {
-            "search_list" : {
-                'normal': '생성시간▲',
-                'reverse': '생성시간▼',
-            },
-        }
+#         search_option = {
+#             "search_list" : {
+#                 'normal': '생성시간▲',
+#                 'reverse': '생성시간▼',
+#             },
+#         }
 
-        context = {
-            "title": title,
-            "banner": banner,
-            "posts": page_object,
-            "paginator": paginator,
-            "tag_list": tag_list,
-            "search_option": search_option,
-        }
-        return render(request, 'blog/post_list.html', context)
+#         context = {
+#             "title": title,
+#             "banner": banner,
+#             "posts": page_object,
+#             "paginator": paginator,
+#             "tag_list": tag_list,
+#             "search_option": search_option,
+#         }
+#         return render(request, 'blog/post_list.html', context)
 
 
-class SearchCategory(View):
+class BlogIndex(View):
     
     def get(self, request):
         category_name = request.GET.get('category', None)
