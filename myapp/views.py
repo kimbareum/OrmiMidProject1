@@ -7,8 +7,10 @@ from .utils.utils import get_banner
 class IndexMain(View):
 
     def get(self, request):
+
         context = {
-            'title': 'Index',
+            'title': '인덱스 페이지',
+            'banner': get_banner(main="Welcome"),
         }
         return render(request, 'index.html', context)
 

@@ -1,0 +1,19 @@
+.index {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2.4rem;
+    margin: 0 auto;
+    border-radius: var(--border-radius);
+    background: var(--white-color);
+    gap: 5rem;
+}
+
+.index h2 {
+    font-size: 6rem;
+}
+
+.index a {
+    font-size: 2rem;
+}

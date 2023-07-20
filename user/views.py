@@ -83,6 +83,7 @@ class Login(View):
             if user:
                 login(request, user)
                 return redirect('blog:list')
+        print(form.errors)
         context = {
             'title': '로그인',
             'banner': get_banner(main='Login Blog'),
@@ -159,7 +160,10 @@ class ProfileView(View):
         try:
             profile = Profile.objects.select_related('user').get(user__pk=user_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 유저는 존재하지 않습니다.")
+            return redirect('error')
+        if not profile.user.is_active:
+            messages.error(request, "해당 유저는 존재하지 않습니다.")
             return redirect('error')
         user = profile.user
         context = {
@@ -196,57 +200,3 @@ class ProfileUpdate(View):
             user.nickname = form.cleaned_data.get('nickname')
             user.save()
             return redirect('user:profile', user_id=user.pk)
-
-
-
-# class ProfileWrite(APIView):
-
-#     def post(self, request):
-#         user = request.user # request.data.get('user')
-#         print(request.data.get('user'))
-#         image = request.data.get('image')
-#         age = request.data.get('age')
-#         try:
-#             profile = Profile.objects.create(user=user, image=image, age=age)
-#         except IntegrityError as e: 
-#             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-        
-#         serializer = ProfileSerializer(profile)
-
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# class ProfileUpdate(APIView):
-
-#     def get(self, request):
-#         user = request.user
-#         try:
-#             profile = Profile.objects.get(user=user)
-#         except ObjectDoesNotExist as e:
-#             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-#         serializer = ProfileSerializer(profile)
-#         return Response(serializer.data)
-
-#     def post(self, request):
-#         user = request.user
-#         try:
-#             profile = Profile.objects.get(user=user)
-#         except ObjectDoesNotExist as e:
-#             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-#         serializer = ProfileSerializer(profile, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save(user=user)
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-
-
-# class ProfileDelete(APIView):
-
-#     def post(self, request):
-#         try:
-#             profile = Profile.objects.get(user=request.user)
-#         except ObjectDoesNotExist as e:
-#             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-#         profile.delete()
-#         return Response("삭제 완료", status=status.HTTP_204_NO_CONTENT)

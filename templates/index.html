@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+  <!-- layout -->
+  <link rel="stylesheet" href="{% static '/css/about.css' %}" />
+  <!-- component -->
+  <link rel="stylesheet" href="{% static '/css/main.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/index.css' %}" />
+{% endblock head %}
+{% block content %}
+  <!-- main -->
+  <main>  
+    <div class="max-width">
+      <article class="index max-width">
+        <a class="button" href="{% url 'blog:list' %}">블로그로 입장하기</a>
+      </article>
+      <!-- about -->
+      <aside class="about max-width">
+        <h2>About Me</h2>
+        <img src="{% static '/images/my_profile.png' %}" alt="" class="user-profile" />
+        <p class="user-name">Kim Bareum</p>
+        <p class="user-description">주니어 개발자 입니다.</p>
+        <h3>Follow</h3>
+        <ul class="sns">
+          <li>
+            <a href="https://github.com/kimbareum/OrmiMidProject1">
+              <img src="{% static '/assets/Github.svg' %}" alt="GitHub" />
+            </a>
+          </li>
+          <li>
+            <a href="mailto:right.kim93@gmail.com">
+              <img src="{% static '/assets/Mail.svg' %}" alt="mail" />
+            </a>
+          </li>
+        </ul>
+      </aside>
+      <!-- //about -->
+    </div>
+  </main>
+  <!-- //main -->
+{% endblock content %}

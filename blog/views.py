@@ -3,55 +3,16 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Count
 
-from django.contrib.auth import get_user_model
 from .models import Post, Comment, Tag, PostFeeling, CommentFeeling
 from .forms import PostForm, CommentForm
 
 from myapp.utils.utils import get_banner, user_check
 
-import re
-
 
 # Create your views here.
-
-### 공용페이지
-# class BlogIndex(View):
-    
-#     def get(self, request):
-#         page = request.GET.get('page')
-#         posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False).order_by('-created_at')
-#         paginator = Paginator(posts, 6)
-#         try:
-#             page_object = paginator.page(page)
-#         except PageNotAnInteger:
-#             page_object = paginator.page(1)
-#         except EmptyPage:
-#             page_object = paginator.page(paginator.num_pages)
-#         title = "블로그에 오신것을 환영합니다."
-#         banner = get_banner()
-
-#         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
-
-#         search_option = {
-#             "search_list" : {
-#                 'normal': '생성시간▲',
-#                 'reverse': '생성시간▼',
-#             },
-#         }
-
-#         context = {
-#             "title": title,
-#             "banner": banner,
-#             "posts": page_object,
-#             "paginator": paginator,
-#             "tag_list": tag_list,
-#             "search_option": search_option,
-#         }
-#         return render(request, 'blog/post_list.html', context)
 
 
 class BlogIndex(View):
@@ -59,7 +20,7 @@ class BlogIndex(View):
     def get(self, request):
         category_name = request.GET.get('category', None)
         page = request.GET.get('page', None)
-        sort = request.GET.get('sort', None)
+        sort = request.GET.get('sort', 'reverse')
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
         search_option = {
             "search_list" : {
@@ -139,7 +100,7 @@ class PostDetail(View):
         try:
             post = Post.objects.prefetch_related('comment_set', 'tag_set', 'postfeeling_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 페이지는 존재하지 않습니다.")
             return redirect('error')
         post.view_count += 1
         post.save()
@@ -176,7 +137,7 @@ class PostUpdate(LoginRequiredMixin, View):
         try:
             post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 게시물은 존재하지 않습니다.")
             return redirect('error')
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
         tags = post.tag_set.all()
@@ -197,7 +158,7 @@ class PostUpdate(LoginRequiredMixin, View):
         try:
             post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 게시물은 존재하지 않습니다.")
             return redirect('error')
         if not user_check(post.writer, request.user):
             messages.error(request, "현재 로그인된 계정을 확인해주세요.")
@@ -226,7 +187,7 @@ class PostDelete(LoginRequiredMixin, View):
         try:
             post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 게시물은 존재하지 않습니다.")
             return redirect('error')
         if not user_check(post.writer, request.user):
             messages.error(request, "현재 로그인된 계정을 확인해주세요.")
@@ -242,13 +203,13 @@ class PostLike(LoginRequiredMixin, View):
         try:
             post = Post.objects.get(pk=post_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 게시물은 존재하지 않습니다.")
             return redirect('error')
         
         user = request.user
 
         try:
-            feeling = PostFeeling.objects.select_related('user').get(post=post)
+            feeling = PostFeeling.objects.select_related('user').get(post=post, user=user)
             like = feeling.like
             if like:
                 post.like_count -= 1
@@ -274,7 +235,7 @@ class CommentWrite(LoginRequiredMixin, View):
             try:
                 post = Post.objects.get(pk=post_id)
             except ObjectDoesNotExist as e:
-                messages.error(request, str(e))
+                messages.error(request, "해당 게시물은 존재하지 않습니다.")
                 return redirect('error')
             comment = form.save(commit=False)
             comment.writer = user
@@ -293,7 +254,7 @@ class CommentDelete(LoginRequiredMixin, View):
         try:
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 댓글은 존재하지 않습니다.")
             return redirect('error')
         if not user_check(comment.writer, request.user):
             messages.error(request, "현재 로그인된 계정을 확인해주세요.")
@@ -309,13 +270,13 @@ class CommentLike(LoginRequiredMixin, View):
         try:
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
-            messages.error(request, str(e))
+            messages.error(request, "해당 댓글은 존재하지 않습니다.")
             return redirect('error')
         
         user = request.user
 
         try:
-            feeling = CommentFeeling.objects.select_related('user').get(comment=comment)
+            feeling = CommentFeeling.objects.select_related('user').get(comment=comment, user=user)
             like = feeling.like
             if like:
                 comment.like_count -= 1

@@ -21,7 +21,6 @@
         {% else %}
           <button type="submit" class="btn-like">{{ comment.like_count }}</button>
         {% endif %}
-        
       </form>
     </div>
     <div class="comment-btn-wrap">
@@ -33,14 +32,16 @@
           </button>
         </form>
       {% endif %}
-      <button class="recomment btn-comment" cm_id="{{comment.pk}}">댓글</button>
-      <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post" class="comment-form no-display" >
-        {% csrf_token %}
-        <textarea name="content"></textarea>
-        <input type="hidden" name="parent_comment" value="{{comment.pk}}">
-        <input type="submit" value="작성" class="btn-comment">
-        <input type="button" class="recomment-cancel btn-comment" value="취소">
-      </form>
+      {% if user.is_authenticated %}
+        <button class="recomment btn-comment" cm_id="{{comment.pk}}">댓글</button>
+        <form action="{% url 'blog:cm-write' post_id=post.pk %}" method="post" class="comment-form no-display" >
+          {% csrf_token %}
+          <textarea name="content"></textarea>
+          <input type="hidden" name="parent_comment" value="{{comment.pk}}">
+          <input type="submit" value="작성" class="btn-comment">
+          <input type="button" class="recomment-cancel btn-comment" value="취소">
+        </form>
+      {% endif %}
     </div>
     {% else %}
     <div class="comment-content">
