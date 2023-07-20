@@ -20,6 +20,7 @@
           </div>
           <hr />
           <div class="view-contents">
+            <!-- form -->
             <form action="{% url 'user:pf-update' %}" method="post" class="profile">
               {% csrf_token %}
               <div class="profile-wrap">
@@ -42,6 +43,15 @@
               </div>
               <input class="btn-save" type="submit" value="수정">
             </form>
+            <!-- //form -->
+            <div class="btn-group profile-btns">
+              <a href="{% url 'user:pw-change' %}" class="btn-modify">
+                비밀번호 변경
+              </a>
+              <a href="{% url 'user:delete' %}" class="btn-delete">
+                회원 탈퇴
+              </a>
+            </div>
           </div>
           <!-- //content -->
         </div>

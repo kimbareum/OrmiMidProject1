@@ -4,7 +4,11 @@
   <div class="comment-content">
     <dl class="comment-author-wrap">
       <dt class="a11y-hidden">Author</dt>
-      <dd class="author"><a href="{% url 'user:profile' user_id=comment.writer.pk %}"><img src="{{ comment.writer.profile.image }}" alt="profile image" />{{ comment.writer }}</a></dd>
+      {% if comment.writer.is_active %}
+        <dd class="author"><a href="{% url 'user:profile' user_id=comment.writer.pk %}"><img src="{{ comment.writer.profile.image }}" alt="profile image" />{{ comment.writer }}</a></dd>
+      {% else %}
+        <dd class="author"><img src="{% static '/images/anonymous.png' %}" alt="" /> -- </dd>
+      {% endif %}
       <dt class="a11y-hidden">Created</dt>
       <dd class="created">{{ comment.created_at }}</dd>
     </dl>

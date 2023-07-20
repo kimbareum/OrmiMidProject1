@@ -11,16 +11,32 @@
 {% block content %}
   <!-- main -->
   <main>
-    <!-- posts -->
-    <div class="max-width category-select">
-      <p class="a11y-hidden">Category Select</p>
-      <ul class="categories">
-        <li><a href="/blog/">All</a></li>
-        {% for tag in tag_list %}
-          <li><a href="/blog/search/?category={{ tag }}">{{ tag }}</a></li>
-        {% endfor %}
-      </ul>
+    <!-- search -->
+    <div class="max-width search">
+      <div class="category-select">
+        <p class="a11y-hidden">Category Select</p>
+        <ul class="categories">
+          <li><a href="/blog/search/All">All</a></li>
+          {% for tag in tag_list %}
+            <li><a href="/blog/search/{{ tag }}">{{ tag }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="sort-select">
+        <p class="a11y-hidden">Sort Option Select</p>
+        <ul class="sort-options">
+          {% for option, name in search_option.search_list.items %}
+            {% if option != search_option.sort_option %}
+              <li><a href="/blog/search/{{ option }}">{{ name }}</a></li>
+            {% else %}
+              <li><a class="current-sort" href="/blog/search/{{ option }}">{{ name }}</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
     </div>
+    <!-- //search -->
+    <!-- posts -->
     <div class="max-width">
       <h2 class="a11y-hidden">Post</h2>
       <ul class="posts">
@@ -45,7 +61,11 @@
                   <!-- author -->
                   <dl class="author-wrap">
                     <dt class="a11y-hidden">Author</dt>
-                    <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" /> {{ post.writer }}</dd>
+                    {% if post.writer.is_active %}
+                      <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" /> {{ post.writer }}</dd>
+                    {% else %}
+                      <dd class="author"><img src="{% static '/images/anonymous.png' %}" alt="" />탈퇴한 유저입니다.</dd>
+                    {% endif %}
                   </dl>
                   <dl class="stat-wrap">
                     <dt class="a11y-hidden">Created</dt>
@@ -83,7 +103,7 @@
         <div class="page-select">
           <p class="a11y-hidden">Page Select</p>
           <ul class="pages">
-          {% if not category_name %}
+          {% if not search_option.category_name %}
             {% for page in paginator.page_range %}
               {% if page != posts.number %}
                 <li><a href="/blog/?page={{page}}">{{page}}</a></li>
@@ -94,9 +114,9 @@
           {% else %}
             {% for page in paginator.page_range %}
               {% if page != posts.number %}
-                <li><a href="/blog/search/?category={{category_name}}&&page={{page}}">{{page}}</a></li>
+                <li><a class="search-page" href="/blog/search/{{page}}">{{page}}</a></li>
               {% else %}
-                <li><a class="current-page" href="/blog/search/?category={{category_name}}&&page={{page}}">{{page}}</a></li>
+                <li><a class="search-page current-page" href="/blog/search/{{page}}">{{page}}</a></li>
               {% endif %}
             {% endfor %}
           {% endif %}
@@ -112,23 +132,13 @@
         <h3>Follow</h3>
         <ul class="sns">
           <li>
-            <a href="#">
-              <img src="{% static '/assets/Facebook.svg' %}" alt="Facebook" />
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="{% static '/assets/Twitter.svg' %}" alt="Twitter" />
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="{% static '/assets/Instagram.svg' %}" alt="Instagram" />
-            </a>
-          </li>
-          <li>
-            <a href="#">
+            <a href="https://github.com/kimbareum/OrmiMidProject1">
               <img src="{% static '/assets/Github.svg' %}" alt="GitHub" />
+            </a>
+          </li>
+          <li>
+            <a href="mailto:right.kim93@gmail.com">
+              <img src="{% static '/assets/Mail.svg' %}" alt="mail" />
             </a>
           </li>
         </ul>
@@ -138,3 +148,46 @@
   </main>
   <!-- //main -->
 {% endblock content %}
+{% block script %}
+  <script>
+    const category_btns = document.querySelectorAll(".categories a");
+    const sort_btns = document.querySelectorAll(".sort-options a");
+    const page_btns = document.querySelectorAll(".search-page")
+    let sort_option = '{{search_option.sort_option}}' || 'reverse';
+    let category = '{{search_option.category_name}}' || 'All';
+    let page = '{{ posts.number }}' || '1';
+
+    const activate_link = () => {
+      location.href = `/blog/search/?category=${category}&&sort=${sort_option}&&page=${page}`;
+    }
+
+    category_btns.forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const link_text = event.target.href.split('/');
+        category = link_text[link_text.length-1];
+        activate_link();
+      })
+    })
+
+    sort_btns.forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const link_text = event.target.href.split('/');
+        sort_option = link_text[link_text.length-1];
+        activate_link();
+      })
+    })
+
+    if (page_btns) {
+      page_btns.forEach(btn => {
+        btn.addEventListener('click', (event) => {
+          event.preventDefault();
+          const link_text = event.target.href.split('/');
+          page = link_text[link_text.length-1];
+          activate_link();
+        })
+      })
+    }
+  </script>  
+{% endblock script %} 

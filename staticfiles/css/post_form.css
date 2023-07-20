@@ -1,0 +1,38 @@
+.category-drop {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+}
+
+.selected-category .category {
+    margin: 0;
+}
+
+#write-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.title-input {
+    display: flex;
+    gap: 2rem;
+}
+
+.title-input input {
+    flex-grow: 1
+}
+
+#write-form ul {
+    margin: 0.5rem 0;
+}
+
+#write-form ul li {
+    margin: 0;
+}
+
+.btn-save {
+    margin-left: auto;
+}

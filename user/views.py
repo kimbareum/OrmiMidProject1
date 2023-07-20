@@ -5,12 +5,14 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+
 from django.db import IntegrityError
 
 from myapp.utils.utils import get_banner
 
 from .models import Profile
-from .forms import RegisterForm, LoginForm, ProfileUpdateForm
+from .forms import RegisterForm, LoginForm, ProfileUpdateForm, UserDeleteForm
+from django.contrib.auth.forms import PasswordChangeForm
 from myapp.utils.utils import user_check
 
 
@@ -94,6 +96,58 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect('blog:list')
+    
+
+class PasswordChange(LoginRequiredMixin, View):
+
+    def get(self, request):
+        form = PasswordChangeForm(request.user)
+        context = {
+            'title': '패스워드 변경',
+            'banner': get_banner(),
+            'form': form,
+        }
+        return render(request, 'user/password_change.html', context)
+    
+    def post(self, request):
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('user:login')
+        context = {
+            'title': '패스워드 변경',
+            'banner': get_banner(),
+            'form': form,
+            }
+        return render(request, 'user/password_change.html', context)
+
+
+class UserDelete(LoginRequiredMixin, View):
+
+    def get(self, request):
+        form = UserDeleteForm(request.user)
+        context = {
+            'title': '회원 탈퇴',
+            'banner': get_banner(),
+            'form': form,
+            }
+        return render(request, 'user/user_delete.html', context)
+    
+    def post(self, request):
+        user = request.user
+        form = UserDeleteForm(user, request.POST)
+        if form.is_valid():
+            user.is_active = False
+            user.save()
+            logout(request)
+            return redirect('blog:list')
+        
+        context = {
+            'title': '회원 탈퇴',
+            'banner': get_banner(),
+            'form': form,
+            }
+        return render(request, 'user/user_delete.html', context)
 
 
 # ### Profile
@@ -106,6 +160,7 @@ class ProfileView(View):
             profile = Profile.objects.select_related('user').get(user__pk=user_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
+            return redirect('error')
         user = profile.user
         context = {
             "title": f"{user.nickname}의 프로필",

@@ -36,12 +36,20 @@ class BlogIndex(View):
 
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
 
+        search_option = {
+            "search_list" : {
+                'normal': '생성시간▲',
+                'reverse': '생성시간▼',
+            },
+        }
+
         context = {
             "title": title,
             "banner": banner,
             "posts": page_object,
             "paginator": paginator,
             "tag_list": tag_list,
+            "search_option": search_option,
         }
         return render(request, 'blog/post_list.html', context)
 
@@ -51,16 +59,30 @@ class SearchCategory(View):
     def get(self, request):
         category_name = request.GET.get('category', None)
         page = request.GET.get('page', None)
+        sort = request.GET.get('sort', None)
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
+        search_option = {
+            "search_list" : {
+                'normal': '생성시간▲',
+                'reverse': '생성시간▼',
+            },
+            "category_name": category_name,
+            "sort_option": sort,
+        }
 
         if category_name and category_name in tag_list:
             posts = Post.objects.prefetch_related('tag_set').filter(tag__name=category_name, is_deleted=False)
             title = f'{category_name} 검색 결과'
             banner = get_banner(main=f'{category_name} Blog')
         else:
-            posts = Post.objects.prefetch_related('tag_set')
+            posts = Post.objects.prefetch_related('tag_set').filter(is_deleted=False)
             title = f'블로그에 오신것을 환영합니다.'
             banner = get_banner(main=f'Our Blog')
+
+        if sort == 'normal':
+            posts = posts.order_by('created_at')
+        elif sort == 'reverse':
+            posts = posts.order_by('-created_at')
 
         paginator = Paginator(posts, 6)
         try:
@@ -73,20 +95,12 @@ class SearchCategory(View):
         context = {
             "title": title,
             "banner": banner,
-            "posts": posts,
+            "posts": page_object,
+            "paginator": paginator,
             "tag_list": tag_list,
-            "category_name": category_name,
+            "search_option": search_option,
         }
         return render(request, 'blog/post_list.html', context)
-
-
-class BlogError(View):
-    
-    def get(self,request):
-        context = {
-            "banner": get_banner(text="Something Went Wrong..."),
-        }
-        return render(request, 'blog/error.html')
 
 
 ### 포스트
@@ -126,7 +140,7 @@ class PostDetail(View):
             post = Post.objects.prefetch_related('comment_set', 'tag_set', 'postfeeling_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         post.view_count += 1
         post.save()
         if request.user.is_authenticated:
@@ -163,7 +177,7 @@ class PostUpdate(LoginRequiredMixin, View):
             post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
         tags = post.tag_set.all()
         selected_tag_list = []
@@ -184,10 +198,10 @@ class PostUpdate(LoginRequiredMixin, View):
             post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         if not user_check(post.writer, request.user):
             messages.error(request, "현재 로그인된 계정을 확인해주세요.")
-            return redirect('blog:error')
+            return redirect('error')
         
         if form.is_valid():
             post.title = form.cleaned_data['title']
@@ -213,10 +227,10 @@ class PostDelete(LoginRequiredMixin, View):
             post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         if not user_check(post.writer, request.user):
             messages.error(request, "현재 로그인된 계정을 확인해주세요.")
-            return redirect('blog:error')
+            return redirect('error')
         post.is_deleted = True
         post.save()
         return redirect('blog:list')
@@ -229,7 +243,7 @@ class PostLike(LoginRequiredMixin, View):
             post = Post.objects.get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         
         user = request.user
 
@@ -261,7 +275,7 @@ class CommentWrite(LoginRequiredMixin, View):
                 post = Post.objects.get(pk=post_id)
             except ObjectDoesNotExist as e:
                 messages.error(request, str(e))
-                return redirect('blog:error')
+                return redirect('error')
             comment = form.save(commit=False)
             comment.writer = user
             comment.post = post
@@ -280,10 +294,10 @@ class CommentDelete(LoginRequiredMixin, View):
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         if not user_check(comment.writer, request.user):
             messages.error(request, "현재 로그인된 계정을 확인해주세요.")
-            return redirect('blog:error')
+            return redirect('error')
         comment.is_deleted = True
         comment.save()
         return redirect('blog:detail', post_id=comment.post.pk)
@@ -296,7 +310,7 @@ class CommentLike(LoginRequiredMixin, View):
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
-            return redirect('blog:error')
+            return redirect('error')
         
         user = request.user
 

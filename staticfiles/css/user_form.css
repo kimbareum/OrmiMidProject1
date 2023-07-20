@@ -1,9 +1,9 @@
-.register-form {
+.user-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.register-wrap {
+.user-form-wrap {
     display: flex;
 }

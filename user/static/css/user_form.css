@@ -1,0 +1,9 @@
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-form-wrap {
+    display: flex;
+}

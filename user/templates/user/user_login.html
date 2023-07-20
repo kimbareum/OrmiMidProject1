@@ -3,6 +3,7 @@
 {% block head %}
 <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
 <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+<link rel="stylesheet" href="{% static '/css/user_form.css' %}" />
 {% endblock head %}
 
 {% block content %}
@@ -14,13 +15,20 @@
           <h2>로그인</h2>
         </div>
         <hr>
-        <div class="login-form">
-          <form action="{% url 'user:login' %}" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" class="button" value="로그인">
-          </form>
-        </div>
+        <form class="user-form" action="{% url 'user:login' %}" method="post">
+          {% csrf_token %}
+          <div class="user-form-wrap">
+            <label class="label-width" for="id_username">아이디</label>
+            <p>{{ form.username }}</p>
+          </div>
+          {{ form.errors.username }}
+          <div class="user-form-wrap">
+            <label class="label-width" for="id_password">비밀번호</label>
+            <p>{{ form.password }}</p>
+          </div>
+          {{ form.errors.password }}
+          <input type="submit" class="button" value="로그인">
+        </form>
     </section>
   </div>
 </div>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
+<link rel="stylesheet" href="{% static '/css/view.css' %}" />
+<link rel="stylesheet" href="{% static '/css/user_form.css' %}" />
+{% endblock head %}
+
+{% block content %}
+<div class="view">
+  <div class="max-width">
+    <section class="wrap-box">
+      <div class="inner">
+        <div class="title-wrap">
+          <h2>회원 탈퇴</h2>
+        </div>
+        <hr>
+        <p>회원을 탈퇴할 경우 정상적인 활동을 할 수 없습니다.</p>
+        <p>복구를 원하실 경우, 이메일로 문의주시길 바랍니다.</p>
+        <p>정말로 회원을 탈퇴하고 싶으시다면 비밀번호를 입력하고 회원탈퇴 버튼을 눌러주세요.</p>
+        <hr>
+        <form class="user-form" action="{% url 'user:delete' %}" method="post">
+          {% csrf_token %}
+          <div class="user-form-wrap">
+            <label class="label-width" for="id_old_password">비밀번호</label>
+            <p>{{ form.password }}</p>
+          </div>
+          {{ form.errors.password }}
+          <input type="submit" class="button" value="회원탈퇴">
+        </form>
+
+        
+    </section>
+  </div>
+</div>
+{% endblock content %}
