@@ -29,7 +29,7 @@
           <form id="write-form" action="{% url 'blog:edit' post_id=post.pk %}" method="post">
             {% csrf_token %}
             <div class="title-input">
-              <label for="form-title">제목 : </label>
+              <label for="form-title">제목</label>
               <input id="form-title" name="title" type="text" value="{{ post.title }}">
             </div>
             <div class="category-drop"><span class="selected-category">
@@ -38,7 +38,7 @@
                 <dd>{{ tag }}</dd>
               {% endfor %}
               </dl>
-            </span><button type="button" class="select-button">▼</button></div>
+            </span><button type="button" class="btn-select">▼</button></div>
             <ul class="select-wrap no-display">
               {% for tag in tag_list %}
                 {% if tag in selected_tag_list %}
@@ -57,7 +57,7 @@
             <div id="editor"></div>
             <input id="form-content" name="content" type="hidden">
             <input id="form-thumbnail" name="thumbnail" type="hidden">
-            <input type="submit" value="작성">
+            <input class="btn-save" type="submit" value="수정">
           </form>
         </div>
       </section>

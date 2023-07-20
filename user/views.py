@@ -11,6 +11,7 @@ from myapp.utils.utils import get_banner
 
 from .models import Profile
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm
+from myapp.utils.utils import user_check
 
 
 User = get_user_model()
@@ -98,7 +99,7 @@ class Logout(View):
 # ### Profile
 
 
-class ProfileView(LoginRequiredMixin, View):
+class ProfileView(View):
 
     def get(self, request, user_id):
         try:
@@ -131,6 +132,9 @@ class ProfileUpdate(View):
         if form.is_valid():
             user = request.user
             profile = Profile.objects.get(user=user)
+            if not user_check(profile.user, request.user):
+                messages.error(request, "현재 로그인된 계정을 확인해주세요.")
+                return redirect('blog:error')
             profile.image = form.cleaned_data.get('image')
             profile.state = form.cleaned_data.get('state')
             profile.save()

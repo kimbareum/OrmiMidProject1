@@ -15,7 +15,8 @@
     margin-top: 20px;
 }
 
-.comment-author-wrap dd {
+.comment-author-wrap dd,
+.comment-author-wrap a {
 	display: flex;
 	align-items: center;
 	gap: 0.6rem;
@@ -25,6 +26,27 @@
     width: 2em;
 	height: 2em;
 	border-radius: 50%;
+}
+
+.comment-content-box {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 8rem;
+	margin-bottom: 1rem;
+	font-size: 1.6rem;
+}
+.comment-content-box h2 {
+	width: 100%;
+	text-transform: none;
+}
+
+.comment-content-box h2 {
+	font-size: 3.2rem;
+	font-weight: bold;
+}
+.comment-content-box button {
+	flex-shrink: 0;
 }
 
 .comment-content .btn-group {

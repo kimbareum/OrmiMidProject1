@@ -1,0 +1,18 @@
+.profile {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.profile-thumbnail {
+    max-width: 10rem;
+}
+
+.profile-wrap {
+    display: inline-flex;
+    gap: 1rem;
+}
+
+.label-width {
+    width: 120px;
+}

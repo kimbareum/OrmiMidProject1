@@ -4,11 +4,11 @@
   <div class="comment-content">
     <dl class="comment-author-wrap">
       <dt class="a11y-hidden">Author</dt>
-      <dd class="author"><img src="{{ comment.writer.profile.image }}" alt="profile image" />{{ comment.writer }}</dd>
+      <dd class="author"><a href="{% url 'user:profile' user_id=comment.writer.pk %}"><img src="{{ comment.writer.profile.image }}" alt="profile image" />{{ comment.writer }}</a></dd>
       <dt class="a11y-hidden">Created</dt>
       <dd class="created">{{ comment.created_at }}</dd>
     </dl>
-    <div class="title-wrap">
+    <div class="comment-content-box">
       <p>{{ comment.content }}</p>
       <form action="{% url 'blog:cm-like' post_id=post.pk comment_id=comment.pk %}" method="post">
         {% csrf_token %}
@@ -46,7 +46,7 @@
         <dt class="a11y-hidden">Created</dt>
         <dd class="created">-</dd>
       </dl>
-      <div class="title-wrap">
+      <div class="comment-content-box">
         <p class="deleted-comment">삭제된 코멘트 입니다.</p>
       </div>
     {% endif %}

@@ -4,7 +4,8 @@
 	color: #767676;
 	font-size: 1.2rem;
 }
-.author-wrap dd {
+.author-wrap dd,
+.author-wrap a {
 	display: flex;
 	align-items: center;
 	gap: 0.6rem;

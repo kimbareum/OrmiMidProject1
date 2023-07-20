@@ -18,7 +18,7 @@
             <!-- author -->
             <dl class="author-wrap">
               <dt class="a11y-hidden">Author</dt>
-              <dd class="author"><img src="{{ post.writer.profile.image }}" alt="" />{{ post.writer }}</dd>
+              <dd class="author"><a href="{% url 'user:profile' user_id=post.writer.pk %}"><img src="{{ post.writer.profile.image }}" alt="" />{{ post.writer }}</dd></a>
               <dt class="a11y-hidden">Created</dt>
               <dd class="created">{{ post.created_at }}</dd>
             </dl>
@@ -64,13 +64,16 @@
                   <textarea name="content"></textarea>
                   <input type="submit" value="작성" class="btn-comment">
                 </form>
+                <hr>
             {% endif %}
             <div class="comment-wrap">
               {% if comments %}
                 {% include 'blog/comments.html' %}
               {% else %}
                 <div class="comment-content">
-                  <p>댓글이 없습니다.</p>
+                  <div class="comment-content-box">
+                    <p>댓글이 없습니다.</p>
+                  </div>
                 </div>
               {% endif %}
             </div>

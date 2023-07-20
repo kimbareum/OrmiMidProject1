@@ -11,7 +11,9 @@ from django.contrib.auth import get_user_model
 from .models import Post, Comment, Tag, PostFeeling, CommentFeeling
 from .forms import PostForm, CommentForm
 
-from myapp.utils.utils import get_banner
+from myapp.utils.utils import get_banner, user_check
+
+import re
 
 
 # Create your views here.
@@ -102,10 +104,13 @@ class PostWrite(LoginRequiredMixin, View):
     def post(self, request):
         form = PostForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)
             user = request.user
-            post.writer = user
-            post.save()
+            post = Post.objects.create(
+                writer=user,
+                title=form.cleaned_data['title'],
+                content=form.cleaned_data['content'],
+                thumbnail=form.cleaned_data['thumbnail']
+                )
             tag_names = form.cleaned_data['tags']
             for tag in tag_names:
                 Tag.objects.create(name=tag, post=post)
@@ -122,17 +127,20 @@ class PostDetail(View):
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
             return redirect('blog:error')
-
         post.view_count += 1
         post.save()
-        user_feeling_post = post.postfeeling_set.filter(user=request.user)
-        is_like_post = True if user_feeling_post and user_feeling_post[0].like == True else False
+        if request.user.is_authenticated:
+            user_feeling_post = post.postfeeling_set.filter(user=request.user)
+            is_like_post = True if user_feeling_post and user_feeling_post[0].like == True else False
+            like_comment_list = Comment.objects.filter(
+                post=post,
+                commentfeeling__user=request.user,
+                commentfeeling__like=True
+            ).values_list('pk', flat=True)
+        else:
+            is_like_post = False
+            like_comment_list = []
         
-        like_comment_list = Comment.objects.filter(
-            post=post,
-            commentfeeling__user=request.user,
-            commentfeeling__like=True
-        ).values_list('pk', flat=True)
         comments = post.comment_set.filter(depth=1)
         tags = post.tag_set.all()
         
@@ -177,10 +185,15 @@ class PostUpdate(LoginRequiredMixin, View):
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
             return redirect('blog:error')
+        if not user_check(post.writer, request.user):
+            messages.error(request, "현재 로그인된 계정을 확인해주세요.")
+            return redirect('blog:error')
+        
         if form.is_valid():
             post.title = form.cleaned_data['title']
             post.content = form.cleaned_data['content']
             post.thumbnail = form.cleaned_data['thumbnail']
+            post.save()
             update_tags = form.cleaned_data['tags']
             current_tags = post.tag_set.all()
             for tag_name in update_tags:
@@ -200,6 +213,9 @@ class PostDelete(LoginRequiredMixin, View):
             post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
+            return redirect('blog:error')
+        if not user_check(post.writer, request.user):
+            messages.error(request, "현재 로그인된 계정을 확인해주세요.")
             return redirect('blog:error')
         post.is_deleted = True
         post.save()
@@ -264,6 +280,9 @@ class CommentDelete(LoginRequiredMixin, View):
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
             messages.error(request, str(e))
+            return redirect('blog:error')
+        if not user_check(comment.writer, request.user):
+            messages.error(request, "현재 로그인된 계정을 확인해주세요.")
             return redirect('blog:error')
         comment.is_deleted = True
         comment.save()

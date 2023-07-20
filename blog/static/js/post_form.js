@@ -14,6 +14,7 @@ const form_thumbnail = document.querySelector('#form-thumbnail')
 write_form.addEventListener("submit", (e) => {
   e.preventDefault()
   form_content.value = editor.getHTML();
+  console.log(form_content.value)
   const thumbnail = form_content.value.match(/<img[^>]+src="?([^"\s]+)"?\s*[^>]*>/);
   if (thumbnail) {
     form_thumbnail.value = thumbnail[1];
@@ -28,7 +29,7 @@ const select_wrap = document.querySelector('.select-wrap');
 const selects = select_wrap.querySelectorAll("input");
 const selected_category_list = []
 const selected_category = document.querySelector('.selected-category');
-const select_button = document.querySelector('.select-button');
+const select_button = document.querySelector('.btn-select');
 
 for (const tag_wrap of selected_category.querySelectorAll('dd')){
   selected_category_list.push(tag_wrap.innerText)

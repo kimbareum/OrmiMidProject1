@@ -48,12 +48,13 @@
 	padding-left: 2.4rem;
 	border: 1px solid rgba(var(--main-rgb), 0.5);
 	border-radius: var(--border-radius);
-	background: var(--white-color) url(../assets/icon-save.svg) no-repeat 2rem 50% / 1.6rem;
+	background: var(--main-color) url(../assets/icon-save-white.svg) no-repeat 2rem 50% / 1.6rem;
+    color: var(--white-color);
 	transition: all 0.3s;
 }
 .btn-save:hover {
-	background: var(--main-color) url(../assets/icon-save-white.svg) no-repeat 2rem 50% / 1.6rem;
-	color: var(--white-color);
+	background: var(--white-color) url(../assets/icon-save.svg) no-repeat 2rem 50% / 1.6rem;
+	color:inherit;
 }
 
 /* 뒤로가기 */
@@ -146,4 +147,14 @@
 .btn-comment:focus {
 	outline-color: rgba(var(--red-rgb), 0.2);
 	box-shadow: none;
+}
+
+.btn-select {
+    width: 2.5rem;
+    height: 2.5rem;
+    border:0;
+    border-radius: var(--border-radius);
+    font-size: 1.3rem;
+    font-weight: 500;
+    transition: all 0.3s;
 }

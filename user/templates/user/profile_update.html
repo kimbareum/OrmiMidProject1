@@ -6,6 +6,7 @@
 {% block head %}
   <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
   <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/profile.css' %}" />
 {% endblock head %}
 {% block content %}
   <!-- post view -->
@@ -19,27 +20,27 @@
           </div>
           <hr />
           <div class="view-contents">
-            <form action="{% url 'user:pf-update' %}" method="post" class="profile-form">
+            <form action="{% url 'user:pf-update' %}" method="post" class="profile">
               {% csrf_token %}
-              <div class="profile-form-wrap">
-                <label for="nickname">닉네임</label>
+              <div class="profile-wrap">
+                <label class="label-width" for="nickname">닉네임</label>
                 <input type="text" id="nickname" name="nickname" value="{{ user.nickname }}" />
               </div>
               <input type="hidden" name="image" value="{{ profile.image }}" />
-              <div class="profile-form-wrap">
-                <p><img src="{{ profile.image }}" alt="" /></p>
-                <label for="get_image">프로필 이미지</label>
+              <div class="profile-wrap">
+                <label class="label-width" for="get_image">프로필 이미지</label>
+                <img class="profile-thumbnail" src="{{ profile.image }}" alt="" />
                 <input type="file" accept="image/*" id="get_image">
               </div>
-              <div class="profile-form-wrap">
-                <label for="state">상태</label>
+              <div class="profile-wrap">
+                <label class="label-width" for="state">상태</label>
                 {% if profile.state %}
                   <input type="text" id="state" name="state" value="{{ profile.state }}" placeholder="당신의 상태를 입력해주세요!">
                 {% else %}
                   <input type="text" id="state" name="state" value="" placeholder="당신의 상태를 입력해주세요!">
                 {% endif %}
               </div>
-              <input type="submit" value="수정">
+              <input class="btn-save" type="submit" value="수정">
             </form>
           </div>
           <!-- //content -->
@@ -50,25 +51,5 @@
   <!-- //post view -->
 {% endblock content %}
 {% block script %}
-<script>
-  const form = document.querySelector(".profile-form")
-  const get_image = form.querySelector("#get_image")
-
-  let result = ""
-  get_image.onchange = (event) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(get_image.files[0]);
-    reader.onload = function(e) {
-      result = e.target.result
-    }
-  }
-  
-  form.addEventListener("submit", (event)=>{
-    event.preventDefault()
-    if (result) {
-      event.target.image.value = result
-    }
-    form.submit()
-  })
-</script>
+<script src="{% static '/js/profile_update.js' %}"></script>
 {% endblock script %}

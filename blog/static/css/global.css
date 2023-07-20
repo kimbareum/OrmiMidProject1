@@ -118,6 +118,21 @@ body {
 	margin-bottom: 2rem;
 }
 
+.label-width {
+    width: 120px;
+}   
+
 *.no-display {
     display: none !important;
+}
+
+ul.errorlist {
+    margin: 0;
+}
+
+.errorlist {
+    color: var(--red-color);
+}
+.error {
+    color: var(--red-color);
 }

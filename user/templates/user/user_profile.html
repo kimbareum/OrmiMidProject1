@@ -6,6 +6,7 @@
 {% block head %}
   <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
   <link rel="stylesheet" href="{% static '/css/view.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/profile.css' %}" />
 {% endblock head %}
 {% block content %}
   <!-- post view -->
@@ -19,14 +20,29 @@
           </div>
           <hr />
           <div class="view-contents">
-            <p>닉네임:</p>
-            <p>{{ profile.user.nickname }}</p>
-            <p>프로필 이미지 :</p>
-            <p><img src="{{ profile.image }}" alt="" /></p>
-            <p>상태 :</p>
-            <p>{{ profile.state }}</p>
+            <div class="profile">
+              <div class="profile-wrap">
+                <p class="label-width">닉네임</p>
+                <p>{{ profile.user.nickname }}</p>
+              </div>
+              <div class="profile-wrap">
+                <p class="label-width">프로필 이미지</p>
+                <p><img class="profile-thumbnail" src="{{ profile.image }}" alt="" /></p>
+              </div>
+              <div class="profile-wrap">
+                <p class="label-width">상태</p>
+                <p>{{ profile.state }}</p>
+              </div>
+            </div>
           </div>
           <!-- //content -->
+          {% if user == profile.user %}
+            <div class="btn-group">
+              <a href="{% url 'user:pf-update' %}" class="btn-modify">
+                <span class="a11y-hidden">modify</span>
+              </a>
+            </div>
+          {% endif %}
         </div>
       </section>
     </div>

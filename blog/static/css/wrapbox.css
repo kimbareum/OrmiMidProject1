@@ -23,12 +23,12 @@
 	font-weight: bold;
 	text-transform: uppercase;
 }
-.wrap-box ul {
+/* .wrap-box ul {
 	margin-bottom: 2.4rem;
 }
 .wrap-box ul li:not(:first-child) {
 	margin-top: 4rem;
-}
+} */
 
 /* view, write */
 .mypage .wrap-box,
