@@ -15,6 +15,4 @@ urlpatterns = [
     path('<int:post_id>/comment/write/', views.CommentWrite.as_view(), name='cm-write'),
     path('comment/delete/<int:comment_id>/', views.CommentDelete.as_view(), name='cm-delete'),
     path('<int:post_id>/<int:comment_id>/like/', views.CommentLike.as_view(), name='cm-like'),
-    # 검색
-    #path('search/', views.SearchCategory.as_view(), name='search'),
 ]

@@ -33,7 +33,7 @@
               <dt class="a11y-hidden">Category</dt>
               {% if tags %}
                 {% for tag in tags %}
-                  <dd><a href="/blog/search/?category={{tag.name}}">{{ tag.name }}</a></dd>
+                  <dd><a href="/blog/?category={{tag.name}}">{{ tag.name }}</a></dd>
                 {% endfor %}
               {% else %}
                 <dd>no tags</dd>

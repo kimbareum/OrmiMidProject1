@@ -4,9 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
-
-from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 from myapp.utils.utils import get_banner
 

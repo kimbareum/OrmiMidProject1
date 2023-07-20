@@ -10,6 +10,7 @@ category_btns.forEach(btn => {
     event.preventDefault();
     const link_text = event.target.href.split('/');
     category = link_text[link_text.length-1];
+    page = 1
     activate_link();
   })
 })
@@ -19,6 +20,7 @@ sort_btns.forEach(btn => {
     event.preventDefault();
     const link_text = event.target.href.split('/');
     sort_option = link_text[link_text.length-1];
+    page = 1
     activate_link();
   })
 })
