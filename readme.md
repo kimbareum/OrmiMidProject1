@@ -115,6 +115,7 @@
 ![010](/readme/010_search_query.png)  
 검색페이지입니다.  
 - 블로그의 리스트와 거의 다른부분이 없어서 동일한 view에서 get요청 안의 category, sort, page 여부에 따라서 처리를 다르게 하도록 하였습니다.
+- 현재 선택된 카테고리는 Tech Blog 식으로 위에 나타나고, 현재의 정렬방식에는 밑줄이 쳐집니다.
 <br/><br/>
 
 ![011](/readme/011_detail_page.png)
