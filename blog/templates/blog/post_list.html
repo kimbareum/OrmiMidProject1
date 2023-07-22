@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load pages %}
 {% block head %}
   <!-- layout -->
   <link rel="stylesheet" href="{% static '/css/about.css' %}" />
@@ -103,23 +104,37 @@
         <div class="page-select">
           <p class="a11y-hidden">Page Select</p>
           <ul class="pages">
-          {% if not search_option.category_name %}
-            {% for page in paginator.page_range %}
-              {% if page != posts.number %}
-                <li><a href="/blog/?page={{page}}">{{page}}</a></li>
-              {% else %}
-                <li><a class="current-page" href="/blog/?page={{page}}">{{page}}</a></li>
+          {% with posts.number|get_page_range:max_page as page_range %}
+            {% if not search_option.category_name %}
+              {% if posts.has_previous %}
+                <li><a href="/blog/?page={{ posts.number|prev_page }}">prev</a></li>
               {% endif %}
-            {% endfor %}
-          {% else %}
-            {% for page in paginator.page_range %}
-              {% if page != posts.number %}
-                <li><a class="search-page" href="/blog/search/{{page}}">{{page}}</a></li>
-              {% else %}
-                <li><a class="search-page current-page" href="/blog/search/{{page}}">{{page}}</a></li>
+              {% for page in page_range %}
+                {% if page != posts.number %}
+                  <li><a href="/blog/?page={{ page }}">{{page}}</a></li>
+                {% else %}
+                  <li><a class="current-page" href="/blog/?page={{ page }}">{{page}}</a></li>
+                {% endif %}
+              {% endfor %}
+              {% if posts.has_next %}
+                <li><a href="/blog/?page={{ posts.number|next_page:max_page }}">next</a></li>
               {% endif %}
-            {% endfor %}
-          {% endif %}
+            {% else %}
+              {% if posts.has_previous %}
+                <li><a href="/blog/search/{{ posts.number|prev_page }}">prev</a></li>
+              {% endif %}
+              {% for page in page_range %}
+                {% if page != posts.number %}
+                  <li><a class="search-page" href="/blog/search/{{page}}">{{page}}</a></li>
+                {% else %}
+                  <li><a class="search-page current-page" href="/blog/search/{{page}}">{{page}}</a></li>
+                {% endif %}
+              {% endfor %}
+              {% if posts.has_next %}
+                <li><a href="/blog/search/{{ posts.number|next_page:max_page }}">next</a></li>
+              {% endif %}
+            {% endif %}
+          {% endwith %}
           </ul>
         </div>
       </aside>

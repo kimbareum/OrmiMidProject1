@@ -11,19 +11,9 @@ from myapp.utils.utils import get_banner
 from .models import Profile
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm, UserDeleteForm
 from django.contrib.auth.forms import PasswordChangeForm
-from myapp.utils.utils import user_check
 
 
 User = get_user_model()
-
-
-def get_banner(main="Our Blog", sub="Python, Django, JavaScript & Life", text=''):
-    banner = {
-        "main": main,
-        "sub": sub,
-        "text": text,
-    }
-    return banner
 
 
 ### Registration
@@ -81,7 +71,6 @@ class Login(View):
             if user:
                 login(request, user)
                 return redirect('blog:list')
-        print(form.errors)
         context = {
             'title': '로그인',
             'banner': get_banner(main='Login Blog'),
@@ -95,7 +84,7 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect('blog:list')
-    
+
 
 class PasswordChange(LoginRequiredMixin, View):
 
@@ -189,9 +178,6 @@ class ProfileUpdate(View):
         if form.is_valid():
             user = request.user
             profile = Profile.objects.get(user=user)
-            if not user_check(profile.user, request.user):
-                messages.error(request, "현재 로그인된 계정을 확인해주세요.")
-                return redirect('blog:error')
             profile.image = form.cleaned_data.get('image')
             profile.state = form.cleaned_data.get('state')
             profile.save()

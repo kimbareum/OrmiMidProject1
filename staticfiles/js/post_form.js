@@ -14,7 +14,6 @@ const form_thumbnail = document.querySelector('#form-thumbnail')
 write_form.addEventListener("submit", (e) => {
   e.preventDefault()
   form_content.value = editor.getHTML();
-  console.log(form_content.value)
   const thumbnail = form_content.value.match(/<img[^>]+src="?([^"\s]+)"?\s*[^>]*>/);
   if (thumbnail) {
     form_thumbnail.value = thumbnail[1];

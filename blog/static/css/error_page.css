@@ -1,0 +1,10 @@
+.error-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.error-page a{
+    padding-left:auto;
+    width: 5rem;
+}
