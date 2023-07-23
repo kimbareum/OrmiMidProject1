@@ -6,7 +6,6 @@
 {% block head %}
   <link rel="stylesheet" href="{% static '/css/wrapbox.css' %}" />
   <link rel="stylesheet" href="{% static '/css/view.css' %}" />
-  <link rel="stylesheet" href="{% static '/css/error_page.css' %}" />
 {% endblock head %}
 {% block content %}
   <!-- post view -->
@@ -18,8 +17,9 @@
             <h2>정상적이지 않은 접근입니다.</h2>
           </div>
           <hr>
-          <div class="view-contents error-page">
+          <div class="view-contents">
             <p>존재하지 않는 페이지 이거나, 페이지에 접근할 권한이 없습니다.</p>
+            <hr>
             <a class='button' href="{% url 'blog:list' %}">홈으로 이동</a>
           </div>
         </div>

@@ -79,11 +79,16 @@
     <div class="banner" image="{% random_banner %}">
       <div class="max-width">
         <div class="banner-contents">
-          <p class="sub-text">{{banner.sub}}</p>
-          <p class="main-text">{{banner.main}}</p>
-          <p class="description">
-            {{banner.text}}
-          </p>
+          {% if banner %}
+            <p class="sub-text">{{banner.sub}}</p>
+            <p class="main-text">{{banner.main}}</p>
+            <p class="description">
+              {{banner.text}}
+            </p>
+          {% else %}
+            <p class="sub-text">Python, Django, JavaScript & Life</p>
+            <p class="main-text">Our Blog</p>
+          {% endif %}
         </div>
       </div>
     </div>

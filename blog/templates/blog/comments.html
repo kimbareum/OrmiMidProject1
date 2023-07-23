@@ -7,7 +7,7 @@
       {% if comment.writer.is_active %}
         <dd class="author"><a href="{% url 'user:profile' user_id=comment.writer.pk %}"><img src="{{ comment.writer.profile.image }}" alt="profile image" />{{ comment.writer }}</a></dd>
       {% else %}
-        <dd class="author"><img src="{% static '/images/anonymous.png' %}" alt="" /> -- </dd>
+        <dd class="author"><img src="{% static '/images/anonymous.png' %}" alt="" /> 탈퇴한 유저입니다. </dd>
       {% endif %}
       <dt class="a11y-hidden">Created</dt>
       <dd class="created">{{ comment.created_at }}</dd>
