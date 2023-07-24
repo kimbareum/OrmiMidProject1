@@ -5,4 +5,4 @@ register = template.Library()
 
 @register.simple_tag
 def random_banner():
-    return random.randint(1, 6)
+    return random.randint(1, 7)
