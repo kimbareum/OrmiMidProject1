@@ -109,7 +109,7 @@ class PostDetail(View):
         try:
             post = Post.objects.prefetch_related('comment_set', 'tag_set', 'postfeeling_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            return Http404()
+            return Http404("존재하지 않는 페이지")
         
         cookie = view_count_cookie(request, post_id)
 
@@ -156,7 +156,7 @@ class PostUpdate(LoginRequiredMixin, View):
         try:
             post = Post.objects.prefetch_related('tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            return Http404()
+            return Http404("존재하지 않는 페이지")
         tag_list = list(map(lambda x: x[0], Tag.TAG_CHOICES))
         tags = post.tag_set.all()
         selected_tag_list = []
@@ -202,7 +202,7 @@ class PostDelete(LoginRequiredMixin, View):
         try:
             post = Post.objects.prefetch_related('comment_set', 'tag_set').get(pk=post_id)
         except ObjectDoesNotExist as e:
-            return Http404()
+            return Http404("존재하지 않는 페이지")
         post.is_deleted = True
         post.save()
         return redirect('blog:list')
@@ -214,7 +214,7 @@ class PostLike(LoginRequiredMixin, View):
         try:
             post = Post.objects.get(pk=post_id)
         except ObjectDoesNotExist as e:
-            return Http404()
+            return Http404("존재하지 않는 페이지")
         
         user = request.user
 
@@ -246,7 +246,7 @@ class CommentWrite(LoginRequiredMixin, View):
             try:
                 post = Post.objects.get(pk=post_id)
             except ObjectDoesNotExist as e:
-                return Http404()
+                return Http404("존재하지 않는 페이지")
             comment = form.save(commit=False)
             comment.writer = user
             comment.post = post
@@ -265,7 +265,7 @@ class CommentDelete(LoginRequiredMixin, View):
         try:
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
-            return Http404()
+            return Http404("존재하지 않는 페이지")
         comment.is_deleted = True
         comment.save()
         return redirect('blog:detail', post_id=comment.post.pk)
@@ -277,7 +277,7 @@ class CommentLike(LoginRequiredMixin, View):
         try:
             comment = Comment.objects.get(pk=comment_id)
         except ObjectDoesNotExist as e:
-            return Http404()
+            return Http404("존재하지 않는 페이지")
         
         user = request.user
 

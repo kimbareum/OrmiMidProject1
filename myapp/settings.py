@@ -38,7 +38,7 @@ DEBUG = env('DEBUG', default=False)
 # Login URL
 LOGIN_URL = 'user:login'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['52.78.130.1']
 
 
 # Application definition
